@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace CentralServer.sita {
 	public class BackupRequest {
@@ -44,8 +45,8 @@ namespace CentralServer.sita {
 				latitude = value;
 			}
 		}
-		private String description;
-		public String Description {
+		private string description;
+		public string Description {
 			get {
 				return description;
 			}
@@ -63,9 +64,30 @@ namespace CentralServer.sita {
 			}
 		}
 
-		private Team team_assigned2;
-		private ServiceType serviceType2;
+		private Team teamAssigned;
+        public Team TeamAssigned
+        {
+            get{
+                return teamAssigned;
+            }
+            set{
+                teamAssigned = value;
+            }
+        }
 
-	}
+        public BackupRequest(int id, DateTime dateAndTime, RequestFullFilled fullFilled, double longtitude, double latitude, string description, ServiceType requestedService)
+        {
+            this.id = id;
+            this.dateAndTime = dateAndTime;
+            this.fullFilled = fullFilled;
+            this.longtitude = longtitude;
+            this.latitude = latitude;
+            this.description = description;
+            this.requestedService = requestedService;
+        }
+
+
+
+    }
 
 }

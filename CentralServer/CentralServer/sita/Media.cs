@@ -16,8 +16,8 @@ namespace CentralServer.sita {
 				content = value;
 			}
 		}
-		private String mimeType;
-		public String MimeType {
+		private string mimeType;
+		public string MimeType {
 			get {
 				return mimeType;
 			}
@@ -34,8 +34,8 @@ namespace CentralServer.sita {
 				date = value;
 			}
 		}
-		private String source;
-		public String Source {
+		private string source;
+		public string Source {
 			get {
 				return source;
 			}
@@ -52,13 +52,14 @@ namespace CentralServer.sita {
 				accepted = value;
 			}
 		}
-		private String sugestion;
-		public String Sugestion {
+		private string suggestion;
+		public string Suggestion
+        {
 			get {
-				return sugestion;
+				return suggestion;
 			}
 			set {
-				sugestion = value;
+                suggestion = value;
 			}
 		}
 		private Importance importance;
@@ -71,9 +72,47 @@ namespace CentralServer.sita {
 			}
 		}
 
-		private Incident media;
-		private Category in_Category2;
-		private Importance importance2;
+		private Incident incident;
+        public Incident Incident
+        {
+            get
+            {
+                return incident;
+            }
+            set
+            {
+                incident = value;
+            }
+        }
+
+		private Category category;
+        public Category Category
+        {
+            get
+            {
+                return category;
+            }
+            set
+            {
+                category = value;
+            }
+        }
+
+        public Media(int id, byte[] content, string mimeType, DateTime date, string source, 
+            MediaAccepted accepted, string suggestion, Importance importance, Incident incident,
+            Category category)
+        {
+            this.id = id;
+            this.content = content;
+            this.mimeType = mimeType;
+            this.date = date;
+            this.source = source;
+            this.accepted = accepted;
+            this.suggestion = suggestion;
+            this.importance = importance;
+            this.incident = incident;
+            this.category = category;
+        }
 
 	}
 
