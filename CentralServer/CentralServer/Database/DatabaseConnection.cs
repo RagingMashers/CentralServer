@@ -89,16 +89,16 @@ namespace CentralServer.Database
         //}
 
         /// <summary>
-        /// Insert data into the database
+        /// Insert/delete data into/from the database
         ///
         /// </summary>
         /// <param name="query">The insert query</param>
         /// <param name="parameters">The parameters used for preventing SQL injection</param>
         /// <returns>Returns the number of affected rows.</returns>
-        public int Insert(string query, List<MySqlParameter> parameters)
+        public int ExecuteNonQuery(string query, List<MySqlParameter> parameters)
         {
-            //try
-            //{
+            try
+            {
                 if (Connect())
                 {
                     MySqlCommand cmd = connection.CreateCommand();
@@ -109,18 +109,18 @@ namespace CentralServer.Database
 
                     return cmd.ExecuteNonQuery();
                 }
-            //}
-            //catch (MySqlException ex)
-            //{
-            //    Console.WriteLine(ex.ToString());
-            //}
-            //finally
-            //{
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
                 if (connection.State == ConnectionState.Open)
                 {
                     Close();
                 }
-            //}
+            }
             return 0;
         }
     }

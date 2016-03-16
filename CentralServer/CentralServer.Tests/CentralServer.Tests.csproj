@@ -55,9 +55,8 @@
   <ItemGroup>
     <Compile Include="sita\IncidentTests.cs" />
     <Compile Include="sita\TeamTests.cs" />
-    <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DatabaseConnectionTest.cs" />
+    <Compile Include="Database\DatabaseConnectionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CentralServer\CentralServer.csproj">

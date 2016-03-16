@@ -10,18 +10,21 @@ namespace CentralServer.Tests
     [TestClass]
     public class DatabaseConnectionTest
     {
+        DatabaseConnection connection; 
+
         [TestMethod]
         public void ConnectTest()
         {
-            DatabaseConnection connection = new DatabaseConnection();
+            connection = new DatabaseConnection();
             Assert.IsTrue(connection.Connect());
         }
 
         [TestMethod]
-        public void InsertTest()
+        public void ExecuteNonQueryTest()
         {
-            DatabaseConnection connection = new DatabaseConnection();
+            connection = new DatabaseConnection();
             List<MySqlParameter> parameters = new List<MySqlParameter>();
+
             parameters.Add(new MySqlParameter("@id", 2));
             parameters.Add(new MySqlParameter("@amountVictims", 2));
             parameters.Add(new MySqlParameter("@amountWounded", 3));
@@ -30,8 +33,11 @@ namespace CentralServer.Tests
             parameters.Add(new MySqlParameter("@radius", 6));
             parameters.Add(new MySqlParameter("@danger", 7));
 
-            int affectedRows = connection.Insert("INSERT INTO Incident VALUES (@id, @amountVictims ,@amountWounded, @long, @lat, @radius, @danger)", parameters);
-            Assert.AreEqual(1, affectedRows);
+            int affectedRowsInsert = connection.ExecuteNonQuery("INSERT INTO Incident VALUES (@id, @amountVictims ,@amountWounded, @long, @lat, @radius, @danger)", parameters);
+            Assert.AreEqual(1, affectedRowsInsert);
+
+            int affectedRowsDelete = connection.ExecuteNonQuery("DELETE FROM Incident WHERE id = @id", parameters);
+            Assert.AreEqual(1, affectedRowsDelete);
         }
     }
 }
