@@ -1,6 +1,13 @@
 using System;
 namespace CentralServer.sita {
 	public class ResourseType {
+	    public ResourseType(int id, string name, string description)
+	    {
+	        this.id = id;
+	        this.name = name;
+	        this.description = description;
+	    }
+
 		private readonly int id;
 		public int Id {
 			get {
