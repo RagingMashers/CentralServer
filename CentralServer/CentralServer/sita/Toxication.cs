@@ -7,8 +7,8 @@ namespace CentralServer.sita {
 				return id;
 			}
 		}
-		private String name;
-		public String Name {
+		private string name;
+		public string Name {
 			get {
 				return name;
 			}
@@ -16,8 +16,8 @@ namespace CentralServer.sita {
 				name = value;
 			}
 		}
-		private String description;
-		public String Description {
+		private string description;
+		public string Description {
 			get {
 				return description;
 			}
@@ -25,8 +25,8 @@ namespace CentralServer.sita {
 				description = value;
 			}
 		}
-		private String chemicalCompound;
-		public String ChemicalCompound {
+		private string chemicalCompound;
+		public string ChemicalCompound {
 			get {
 				return chemicalCompound;
 			}
@@ -53,7 +53,16 @@ namespace CentralServer.sita {
 			}
 		}
 
-
+        public Toxication(int id, string name, string description, string chemicalCompound,
+            int dangerLevel, double volatility)
+        {
+            this.id = id;
+            this.name = name;
+            this.description = description;
+            this.chemicalCompound = chemicalCompound;
+            this.dangerLevel = dangerLevel;
+            this.volatility = volatility;
+        }
 	}
 
 }

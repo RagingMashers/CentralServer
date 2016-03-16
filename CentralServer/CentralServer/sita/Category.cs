@@ -7,8 +7,8 @@ namespace CentralServer.sita {
 				return id;
 			}
 		}
-		private String name;
-		public String Name {
+		private string name;
+		public string Name {
 			get {
 				return name;
 			}
@@ -26,9 +26,12 @@ namespace CentralServer.sita {
 			}
 		}
 
-
-		private Category part_of_category;
-
+        public Category(int id, string name, Category parent)
+        {
+            this.id = id;
+            this.name = name;
+            this.parent = parent;
+        }
 	}
 
 }
