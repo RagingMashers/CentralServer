@@ -90,6 +90,19 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="sita\BackupRequest.cs" />
+    <Compile Include="sita\Category.cs" />
+    <Compile Include="sita\Importance.cs" />
+    <Compile Include="sita\Incident.cs" />
+    <Compile Include="sita\Media.cs" />
+    <Compile Include="sita\MediaAccepted.cs" />
+    <Compile Include="sita\Person.cs" />
+    <Compile Include="sita\RequestFullFilled.cs" />
+    <Compile Include="sita\Resource.cs" />
+    <Compile Include="sita\ResourseType.cs" />
+    <Compile Include="sita\ServiceType.cs" />
+    <Compile Include="sita\Team.cs" />
+    <Compile Include="sita\Toxication.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
