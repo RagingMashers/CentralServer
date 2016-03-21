@@ -10,19 +10,19 @@ namespace CentralServer.Tests
     [TestClass]
     public class DatabaseConnectionTest
     {
-        DatabaseConnection connection; 
+        DatabaseConnection databaseConnection; 
 
         [TestMethod]
         public void ConnectTest()
         {
-            connection = new DatabaseConnection();
-            Assert.IsTrue(connection.Connect());
+            databaseConnection = new DatabaseConnection();
+            Assert.IsTrue(databaseConnection.Connect());
         }
 
         [TestMethod]
         public void ExecuteNonQueryTest()
         {
-            connection = new DatabaseConnection();
+            databaseConnection = new DatabaseConnection();
             List<MySqlParameter> parameters = new List<MySqlParameter>();
 
             parameters.Add(new MySqlParameter("@id", 2));
@@ -33,11 +33,25 @@ namespace CentralServer.Tests
             parameters.Add(new MySqlParameter("@radius", 6));
             parameters.Add(new MySqlParameter("@danger", 7));
 
-            int affectedRowsInsert = connection.ExecuteNonQuery("INSERT INTO Incident VALUES (@id, @amountVictims ,@amountWounded, @long, @lat, @radius, @danger)", parameters);
+            int affectedRowsInsert = databaseConnection.ExecuteNonQuery("INSERT INTO Incident VALUES (@id, @amountVictims ,@amountWounded, @long, @lat, @radius, @danger)", parameters);
             Assert.AreEqual(1, affectedRowsInsert);
 
-            int affectedRowsDelete = connection.ExecuteNonQuery("DELETE FROM Incident WHERE id = @id", parameters);
+            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM Incident WHERE id = @id", new MySqlParameter("@id", 2));
             Assert.AreEqual(1, affectedRowsDelete);
+        }
+
+        [TestMethod]
+        public void ExecuteQueryTest()
+        {
+            databaseConnection = new DatabaseConnection();
+            MySqlDataReader reader = databaseConnection.ExecuteQuery("SELECT * FROM Incident WHERE id = @id", new MySqlParameter("@id", 1));
+            while (reader.Read())
+            {
+                int dangerLevel = reader.GetInt32(6);
+                Assert.AreEqual(3, dangerLevel);
+            }
+            reader.Close();
+            databaseConnection.Connection.Close();
         }
     }
 }
