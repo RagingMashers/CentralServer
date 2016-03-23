@@ -3,77 +3,56 @@ using System.Collections.Generic;
 
 namespace CentralServer.sita {
 	public class BackupRequest {
-		private readonly int id;
-		public int Id {
-			get {
-				return id;
-			}
+        #region fields and properties
+        private readonly int id;
+		public int Id
+        {
+			get {return id;}
 		}
 		private DateTime dateAndTime;
-		public DateTime DateAndTime {
-			get {
-				return dateAndTime;
-			}
-			set {
-				dateAndTime = value;
-			}
+		public DateTime DateAndTime
+        {
+			get {return dateAndTime;}
+			set {dateAndTime = value;}
 		}
 		private RequestFullFilled fullFilled;
-		public RequestFullFilled FullFilled {
-			get {
-				return fullFilled;
-			}
-			set {
-				fullFilled = value;
-			}
+		public RequestFullFilled FullFilled
+        {
+			get {return fullFilled;}
+			set {fullFilled = value;}
 		}
 		private double longtitude;
-		public double Longtitude {
-			get {
-				return longtitude;
-			}
-			set {
-				longtitude = value;
-			}
+		public double Longtitude
+        {
+			get {return longtitude;}
+			set {longtitude = value;}
 		}
 		private double latitude;
-		public double Latitude {
-			get {
-				return latitude;
-			}
-			set {
-				latitude = value;
-			}
+		public double Latitude
+        {
+			get {return latitude;}
+			set {latitude = value;}
 		}
 		private string description;
-		public string Description {
-			get {
-				return description;
-			}
-			set {
-				description = value;
-			}
+		public string Description
+        {
+			get {return description;}
+			set {description = value;}
 		}
 		private ServiceType requestedService;
-		public ServiceType RequestedService {
-			get {
-				return requestedService;
-			}
-			set {
-				requestedService = value;
-			}
+		public ServiceType RequestedService
+        {
+			get {return requestedService;}
+			set {requestedService = value;}
 		}
 
 		private Team teamAssigned;
         public Team TeamAssigned
         {
-            get{
-                return teamAssigned;
-            }
-            set{
-                teamAssigned = value;
-            }
+            get{return teamAssigned;}
+            set{teamAssigned = value;}
         }
+        #endregion
 
         public BackupRequest(int id, DateTime dateAndTime, RequestFullFilled fullFilled, double longtitude, double latitude, string description, ServiceType requestedService)
         {
@@ -85,9 +64,6 @@ namespace CentralServer.sita {
             this.description = description;
             this.requestedService = requestedService;
         }
-
-
-
     }
 
 }

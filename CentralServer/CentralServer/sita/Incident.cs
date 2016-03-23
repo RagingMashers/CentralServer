@@ -4,57 +4,48 @@ using System.Collections.Generic;
 
 namespace CentralServer.sita {
 	public class Incident {
-		private readonly int id;
-		public int Id {
-			get {
-				return id;
-			}
+        #region fields and properties
+        private readonly int id;
+		public int Id
+        {
+			get {return id;}
 		}
 		private int amountVictims;
-		public int AmountVictims {
-			get {
-				return amountVictims;
-			}
-			set {
-				amountVictims = value;
-			}
+		public int AmountVictims
+        {
+			get {return amountVictims;}
+			set {amountVictims = value;}
 		}
 		private int amountWounded;
-		public int AmountWounded {
-			get {
-				return amountWounded;
-			}
-			set {
-				amountWounded = value;
-			}
+		public int AmountWounded
+        {
+			get {return amountWounded;}
+			set {amountWounded = value;}
 		}
 		private double longitude;
-		public double Longitude {
-			get {
-				return longitude;
-			}
-			set {
-                longitude = value;
-			}
+		public double Longitude
+        {
+			get {return longitude;}
+			set {longitude = value;}
 		}
 		private double latitude;
-		public double Latitude {
-			get {
-				return latitude;
-			}
-			set {
-                latitude = value;
-			}
+		public double Latitude
+        {
+			get {return latitude;}
+			set {latitude = value;}
 		}
 		private int dangerlevel;
-		public int Dangerlevel {
-			get {
-				return dangerlevel;
-			}
-			set {
-				dangerlevel = value;
-			}
+		public int Dangerlevel
+        {
+			get {return dangerlevel;}
+			set {dangerlevel = value;}
 		}
+        private string description;
+        public string Description
+        {
+            get{return description;}
+            set{description = value;}
+        }
 
         private List<BackupRequest> backupRequests;
         public IReadOnlyCollection<BackupRequest> BackupRequests => backupRequests.AsReadOnly();
@@ -68,6 +59,8 @@ namespace CentralServer.sita {
         private List<Team> teamsOnLocation;
         public IReadOnlyCollection<Team> TeamsOnLocation => teamsOnLocation.AsReadOnly();
 
+        #endregion
+
         /// <summary>
         /// The constructor for the incident class
         /// </summary>
@@ -77,7 +70,7 @@ namespace CentralServer.sita {
         /// <param name="longitude">The X coördinate of the incident</param>
         /// <param name="latitude">The Y coördinate of the incident</param>
         /// <param name="dangerlevel">The level of danger for this incident</param>
-        public Incident(int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel)
+        public Incident(int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, string description)
         {
             this.id = id;
             this.amountVictims = amountVictims;
@@ -85,6 +78,7 @@ namespace CentralServer.sita {
             this.longitude = longitude;
             this.latitude = latitude;
             this.dangerlevel = dangerlevel;
+            this.description = description;
             backupRequests = new List<BackupRequest>();
             mediaItems = new List<Media>();
             toxicElements = new List<Toxication>();
