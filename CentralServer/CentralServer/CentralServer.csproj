@@ -95,7 +95,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="sita\BackupRequest.cs" />
     <Compile Include="sita\Category.cs" />
-    <Compile Include="sita\DatabaseConnection.cs" />
+    <Compile Include="Database\DatabaseConnection.cs" />
     <Compile Include="sita\Importance.cs" />
     <Compile Include="sita\Incident.cs" />
     <Compile Include="sita\Media.cs" />
