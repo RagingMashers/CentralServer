@@ -15,7 +15,7 @@ namespace CentralServer.sita.Tests
 
         [TestInitialize()]
         public void Initialize() {
-            incident = new Incident(1, 1, 1, 1.0, 1.0, 1);
+            incident = new Incident(1, 1, 1, 1.0, 1.0, 1,"testdescription");
         }
 
         [TestMethod()]
