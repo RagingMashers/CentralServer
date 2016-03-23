@@ -13,8 +13,6 @@ namespace CentralServer.Database
         private string constr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
         private MySqlConnection connection = null;
 
-        public MySqlConnection Connection { get { return connection; }}
-
         /// <summary>
         /// Connects to the database connection.
         /// </summary>
@@ -47,18 +45,21 @@ namespace CentralServer.Database
         }
 
         /// <summary>
-        /// Executes an query on the database. Use a while(reader.Read()) loop to iterate through the reader. 
+        /// Executes an query on the database.Use a while(reader.Read()) loop to iterate through the reader.
         /// Close the reader and the connection after you are done!
         /// </summary>
-        /// <param name="query">The SQL query</param>
-        /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection</param>
-        /// <returns> If no rows found it returns null, else it return a MySqlDataReader</returns>
-        public MySqlDataReader ExecuteQuery(string query, List<MySqlParameter> parameters)
+        /// <param name="query">The SQL query.</param>
+        /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection.</param>
+        /// <param name="columnNames">An array of strings that represent the columnnames you want returned.</param>
+        /// <returns>If no rows found it returns null, else it returns a dataSet(List of string arrays).</returns>
+        public List<string[]> ExecuteQuery(string query, List<MySqlParameter> parameters, string[] columnNames)
         {
             try
             {
                 if (Connect())
                 {
+                    List<string[]> dataSet = new List<string[]>();
+
                     MySqlCommand cmd = connection.CreateCommand();
                     cmd.CommandText = query;
                     foreach(MySqlParameter parameter in parameters){
@@ -66,28 +67,53 @@ namespace CentralServer.Database
                     }
 
                     MySqlDataReader reader = cmd.ExecuteReader();
-                    if (!reader.HasRows) return null;
-                    else return reader;
+                    if (reader.HasRows)
+                    {
+                        string[] dataRow = new string[columnNames.Length];
+
+                        while (reader.Read())
+                        {
+                            int count = 0;
+
+                            foreach (string columnName in columnNames)
+                            {
+                                dataRow[count] = reader.GetString(columnName);
+                                count++;
+                            }
+
+                            dataSet.Add(dataRow);
+                        }
+                        reader.Close();
+
+                        return dataSet;
+                    }
                 }
             }
             catch (MySqlException ex)
             {
                 Console.WriteLine(ex.ToString());
             }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                {
+                    Close();
+                }
+            }
             return null;
         }
 
         /// <summary>
-        /// 
+        /// Method for the ExecuteQuery with only one parameter
         /// </summary>
-        /// <param name="query"></param>
-        /// <param name="parameter"></param>
+        /// <param name="query">The query that will be executed</param>
+        /// <param name="parameter">The paramter that will prevent SQL-injection</param>
         /// <returns></returns>
-        public MySqlDataReader ExecuteQuery(string query, MySqlParameter parameter)
+        public List<string[]> ExecuteQuery(string query, MySqlParameter parameter, string[] columnNames)
         {
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             parameters.Add(parameter);
-            return ExecuteQuery(query, parameters);
+            return ExecuteQuery(query, parameters, columnNames);
         }
 
         /// <summary>

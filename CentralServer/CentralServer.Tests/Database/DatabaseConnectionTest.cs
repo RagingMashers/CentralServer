@@ -41,17 +41,30 @@ namespace CentralServer.Tests
         }
 
         [TestMethod]
-        public void ExecuteQueryTest()
+        public void ExecuteQuerySingleColumnTest()
         {
             databaseConnection = new DatabaseConnection();
-            MySqlDataReader reader = databaseConnection.ExecuteQuery("SELECT * FROM Incident WHERE id = @id", new MySqlParameter("@id", 1));
-            while (reader.Read())
-            {
-                int dangerLevel = reader.GetInt32(6);
-                Assert.AreEqual(3, dangerLevel);
-            }
-            reader.Close();
-            databaseConnection.Connection.Close();
+            string[] columnNames = new string[1];
+            columnNames[0] = "dangerLevel";
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Incident WHERE id = @id", new MySqlParameter("@id", 1), columnNames);
+
+            
+            Assert.AreEqual(3, int.Parse(dataSet[0][0]));
+        }
+
+        [TestMethod]
+        public void ExecuteQueryMultipleColumnsTest()
+        {
+            databaseConnection = new DatabaseConnection();
+            string[] columnNames = new string[2];
+            columnNames[0] = "id";
+            columnNames[1] = "dangerLevel";
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Incident WHERE id = @id", new MySqlParameter("@id", 1), columnNames);
+
+            Assert.AreEqual(1, int.Parse(dataSet[0][0]));
+            Assert.AreEqual(3, int.Parse(dataSet[0][1]));
         }
     }
 }
