@@ -44,17 +44,14 @@ namespace CentralServer.Database
             }
         }
 
-        /*
         /// <summary>
-        /// Executes an query on the database. Use a while(reader.Read()) loop to iterate through the reader. 
+        /// Executes an query on the database.Use a while(reader.Read()) loop to iterate through the reader.
         /// Close the reader and the connection after you are done!
         /// </summary>
-        /// <param name="query">The SQL query</param>
-        /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection</param>
-        /// <returns> If no rows found it returns null, else it return a MySqlDataReader</returns>
-        /// 
-        */
-
+        /// <param name="query">The SQL query.</param>
+        /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection.</param>
+        /// <param name="columnNames">An array of strings that represent the columnnames you want returned.</param>
+        /// <returns>If no rows found it returns null, else it returns a dataSet(List of string arrays).</returns>
         public List<string[]> ExecuteQuery(string query, List<MySqlParameter> parameters, string[] columnNames)
         {
             try
