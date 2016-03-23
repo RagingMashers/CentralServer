@@ -4,56 +4,41 @@ using System.Collections.Generic;
 
 namespace CentralServer.sita {
 	public class Incident {
-		private readonly int id;
-		public int Id {
-			get {
-				return id;
-			}
+        #region fields and properties
+        private readonly int id;
+		public int Id
+        {
+			get {return id;}
 		}
 		private int amountVictims;
-		public int AmountVictims {
-			get {
-				return amountVictims;
-			}
-			set {
-				amountVictims = value;
-			}
+		public int AmountVictims
+        {
+			get {return amountVictims;}
+			set {amountVictims = value;}
 		}
 		private int amountWounded;
-		public int AmountWounded {
-			get {
-				return amountWounded;
-			}
-			set {
-				amountWounded = value;
-			}
+		public int AmountWounded
+        {
+			get {return amountWounded;}
+			set {amountWounded = value;}
 		}
 		private double longitude;
-		public double Longitude {
-			get {
-				return longitude;
-			}
-			set {
-                longitude = value;
-			}
+		public double Longitude
+        {
+			get {return longitude;}
+			set {longitude = value;}
 		}
 		private double latitude;
-		public double Latitude {
-			get {
-				return latitude;
-			}
-			set {
-                latitude = value;
-			}
+		public double Latitude
+        {
+			get {return latitude;}
+			set {latitude = value;}
 		}
 		private int dangerlevel;
-		public int Dangerlevel {
-			get {
-				return dangerlevel;
-			}
-			set {
-				dangerlevel = value;
-			}
+		public int Dangerlevel
+        {
+			get {return dangerlevel;}
+			set {dangerlevel = value;}
 		}
 
         private List<BackupRequest> backupRequests;
@@ -67,6 +52,7 @@ namespace CentralServer.sita {
 
         private List<Team> teamsOnLocation;
         public IReadOnlyCollection<Team> TeamsOnLocation => teamsOnLocation.AsReadOnly();
+        #endregion
 
         /// <summary>
         /// The constructor for the incident class
