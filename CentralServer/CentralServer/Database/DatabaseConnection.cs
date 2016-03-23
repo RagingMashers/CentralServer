@@ -13,8 +13,6 @@ namespace CentralServer.Database
         private string constr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
         private MySqlConnection connection = null;
 
-        public MySqlConnection Connection { get { return connection; }}
-
         /// <summary>
         /// Connects to the database connection.
         /// </summary>
