@@ -40,6 +40,12 @@ namespace CentralServer.sita {
 			get {return dangerlevel;}
 			set {dangerlevel = value;}
 		}
+        private string description;
+        public string Description
+        {
+            get{return description;}
+            set{description = value;}
+        }
 
         private List<BackupRequest> backupRequests;
         public IReadOnlyCollection<BackupRequest> BackupRequests => backupRequests.AsReadOnly();
@@ -52,6 +58,7 @@ namespace CentralServer.sita {
 
         private List<Team> teamsOnLocation;
         public IReadOnlyCollection<Team> TeamsOnLocation => teamsOnLocation.AsReadOnly();
+
         #endregion
 
         /// <summary>
@@ -63,7 +70,7 @@ namespace CentralServer.sita {
         /// <param name="longitude">The X coördinate of the incident</param>
         /// <param name="latitude">The Y coördinate of the incident</param>
         /// <param name="dangerlevel">The level of danger for this incident</param>
-        public Incident(int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel)
+        public Incident(int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, string description)
         {
             this.id = id;
             this.amountVictims = amountVictims;
@@ -71,6 +78,7 @@ namespace CentralServer.sita {
             this.longitude = longitude;
             this.latitude = latitude;
             this.dangerlevel = dangerlevel;
+            this.description = description;
             backupRequests = new List<BackupRequest>();
             mediaItems = new List<Media>();
             toxicElements = new List<Toxication>();
