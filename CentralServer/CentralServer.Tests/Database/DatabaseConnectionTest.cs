@@ -26,6 +26,7 @@ namespace CentralServer.Tests
             List<MySqlParameter> parameters = new List<MySqlParameter>();
 
             parameters.Add(new MySqlParameter("@id", 2));
+            parameters.Add(new MySqlParameter("@description", "test"));
             parameters.Add(new MySqlParameter("@amountVictims", 2));
             parameters.Add(new MySqlParameter("@amountWounded", 3));
             parameters.Add(new MySqlParameter("@long", 4));
@@ -33,7 +34,7 @@ namespace CentralServer.Tests
             parameters.Add(new MySqlParameter("@radius", 6));
             parameters.Add(new MySqlParameter("@danger", 7));
 
-            int affectedRowsInsert = databaseConnection.ExecuteNonQuery("INSERT INTO Incident VALUES (@id, @amountVictims ,@amountWounded, @long, @lat, @radius, @danger)", parameters);
+            int affectedRowsInsert = databaseConnection.ExecuteNonQuery("INSERT INTO Incident VALUES (@id, @description, @amountVictims ,@amountWounded, @long, @lat, @radius, @danger)", parameters);
             Assert.AreEqual(1, affectedRowsInsert);
 
             int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM Incident WHERE id = @id", new MySqlParameter("@id", 2));
