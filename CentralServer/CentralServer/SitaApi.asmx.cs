@@ -66,7 +66,22 @@ namespace CentralServer
         public bool AddToxication(string token, string name, string description, string chemicalCompound,
             int dangerLevel, double volatility)
         {
-            return true;
+            databaseConnection = new DatabaseConnection();
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@name", name));
+            parameters.Add(new MySqlParameter("@description", description));
+            parameters.Add(new MySqlParameter("@chemicalCompound", chemicalCompound));
+            parameters.Add(new MySqlParameter("@dangerLevel", dangerLevel));
+            parameters.Add(new MySqlParameter("@volatility", volatility));
+
+            int rowsAffected = databaseConnection.ExecuteNonQuery("INSERT INTO Toxication (name, description, chemicalCompound, dangerLevel, volatility) VALUES (@name, @description, @chemicalCompound, @dangerLevel, @volatility)", parameters);
+            if (rowsAffected == 1)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         [WebMethod]
