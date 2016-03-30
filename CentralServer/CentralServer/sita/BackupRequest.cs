@@ -8,6 +8,7 @@ namespace CentralServer.sita {
 		public int Id
         {
 			get {return id;}
+            set { throw new AccessViolationException("Id can not be set!");}
 		}
 		private DateTime dateAndTime;
 		public DateTime DateAndTime
@@ -53,6 +54,14 @@ namespace CentralServer.sita {
             set{teamAssigned = value;}
         }
         #endregion
+
+        /// <summary>
+        /// DO NOT USE! FOR SERIALISATION ONLY!
+        /// </summary>
+	    public BackupRequest()
+	    {
+	        
+	    }
 
         public BackupRequest(int id, DateTime dateAndTime, RequestFullFilled fullFilled, double longtitude, double latitude, string description, ServiceType requestedService)
         {

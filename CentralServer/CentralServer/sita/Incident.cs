@@ -9,6 +9,7 @@ namespace CentralServer.sita {
 		public int Id
         {
 			get {return id;}
+            set { throw new AccessViolationException("Id can not be set!");}
 		}
 		private int amountVictims;
 		public int AmountVictims
@@ -48,18 +49,46 @@ namespace CentralServer.sita {
         }
 
         private List<BackupRequest> backupRequests;
-        public IReadOnlyCollection<BackupRequest> BackupRequests => backupRequests.AsReadOnly();
+
+	    public List<BackupRequest> BackupRequests
+	    {
+	        get { return backupRequests;  }
+            set { throw new AccessViolationException("backupRequest can not be set!");}
+	    }
 
         private List<Media> mediaItems;
-        public IReadOnlyCollection<Media> MediaItems => mediaItems.AsReadOnly();
+
+	    public List<Media> MediaItems
+	    {
+	        get { return mediaItems;}
+            set { throw new AccessViolationException("MediaItems can not be set!");}
+	    } 
 
         private List<Toxication> toxicElements;
-        public IReadOnlyCollection<Toxication> ToxicElements => toxicElements.AsReadOnly();
+
+	    public List<Toxication> ToxicElements
+	    {
+	        get { return toxicElements;}
+            set { throw new AccessViolationException("ToxicElements can not be set!");}
+	    }
 
         private List<Team> teamsOnLocation;
-        public IReadOnlyCollection<Team> TeamsOnLocation => teamsOnLocation.AsReadOnly();
+
+	    public List<Team> TeamsOnLocation
+	    {
+	        get { return teamsOnLocation; }
+            set { throw new AccessViolationException("TeamsOnLocation can not be set!");}
+	    }
 
         #endregion
+
+        /// <summary>
+        /// DO NOT USE! FOR SERIALISATION ONLY!
+        /// </summary>
+	    public Incident()
+	    {
+	        
+	    }
 
         /// <summary>
         /// The constructor for the incident class

@@ -6,6 +6,7 @@ namespace CentralServer.sita {
 		public int Id
         {
 			get {return id;}
+            set { throw new AccessViolationException("Id can not be set!");}
 		}
 
 		private string name;
@@ -22,6 +23,14 @@ namespace CentralServer.sita {
 			set {description = value;}
 		}
         #endregion
+
+        /// <summary>
+        /// DO NOT USE! FOR SERIALISATION ONLY!
+        /// </summary>
+	    public ResourseType()
+	    {
+	        
+	    }
 
         public ResourseType(int id, string name, string description)
         {
