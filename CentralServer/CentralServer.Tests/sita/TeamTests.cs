@@ -24,8 +24,8 @@ namespace CentralServer.sita.Tests
             if(!team.PersonsInTeam.Contains(person1) || !team.PersonsInTeam.Contains(person2)) Assert.Fail("Not all members where in team!");
             if(!person1.Teams.Contains(team) || !person2.Teams.Contains(team)) Assert.Fail("Team not assigned to persons");
             
-            if (!team.ReleivePerson(person1)) Assert.Fail("Failed to releive person 1");
-            if (!team.ReleivePerson(person2)) Assert.Fail("Failed to releive person 2");
+            if (!team.ReliefPerson(person1)) Assert.Fail("Failed to releive person 1");
+            if (!team.ReliefPerson(person2)) Assert.Fail("Failed to releive person 2");
         }
 
         [TestMethod()]

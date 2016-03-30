@@ -4,6 +4,50 @@ using System.Collections.Generic;
 namespace CentralServer.sita {
     public class Team
     {
+        #region fields and properties
+        private readonly int id;
+        public int Id
+        {
+            get { return id; }
+        }
+
+        private ServiceType type;
+        public ServiceType Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
+        private DateTime startDate;
+        public DateTime StartDate
+        {
+            get { return startDate; }
+            set { startDate = value; }
+        }
+        private DateTime endDate;
+        public DateTime EndDate
+        {
+            get { return endDate; }
+            set { endDate = value; }
+        }
+        private double longitude;
+        public double Longitude
+        {
+            get { return longitude; }
+            set { longitude = value; }
+        }
+        private double latitude;
+        public double Latitude
+        {
+            get { return latitude; }
+            set { latitude = value; }
+        }
+        private readonly List<Person> personsInTeams;
+        public IReadOnlyCollection<Person> PersonsInTeam => personsInTeams.AsReadOnly();
+
+        private readonly List<Resource> resourcesAvailableToTeam;
+        public IReadOnlyCollection<Resource> ResourcesAvailableToTeam => resourcesAvailableToTeam.AsReadOnly();
+        #endregion
+
         public Team(int id, ServiceType type, double longitude, double latitude)
             : this(id, type, longitude, latitude, DateTime.Now, DateTime.Now.AddDays(1))
         {
@@ -19,53 +63,6 @@ namespace CentralServer.sita {
             this.latitude = latitude;
             this.personsInTeams = new List<Person>();
             this.resourcesAvailableToTeam = new List<Resource>();
-        }
-
-        private readonly int id;
-
-        public int Id
-        {
-            get { return id; }
-        }
-
-        private ServiceType type;
-
-        public ServiceType Type
-        {
-            get { return type; }
-            set { type = value; }
-        }
-
-        private DateTime startDate;
-
-        public DateTime StartDate
-        {
-            get { return startDate; }
-            set { startDate = value; }
-        }
-
-        private DateTime endDate;
-
-        public DateTime EndDate
-        {
-            get { return endDate; }
-            set { endDate = value; }
-        }
-
-        private double longitude;
-
-        public double Longitude
-        {
-            get { return longitude; }
-            set { longitude = value; }
-        }
-
-        private double latitude;
-
-        public double Latitude
-        {
-            get { return latitude; }
-            set { latitude = value; }
         }
 
         /// <summary>
@@ -88,7 +85,7 @@ namespace CentralServer.sita {
         /// </summary>
         /// <param name="person">The person to releive</param>
         /// <returns>If the persons is succesfully releived</returns>
-        public bool ReleivePerson(Person person)
+        public bool ReliefPerson(Person person)
         {
             if (person == null) throw new NullReferenceException();
             if (!personsInTeams.Contains(person)) return false; //he isn't in the team
@@ -125,13 +122,6 @@ namespace CentralServer.sita {
             resourcesAvailableToTeam.Remove(resource);
             return true;
         }
-
-        private readonly List<Person> personsInTeams;
-
-        public IReadOnlyCollection<Person> PersonsInTeam => personsInTeams.AsReadOnly();
-
-        private readonly List<Resource> resourcesAvailableToTeam;
-        public IReadOnlyCollection<Resource> ResourcesAvailableToTeam => resourcesAvailableToTeam.AsReadOnly();
     }
 
 }
