@@ -35,7 +35,13 @@ namespace CentralServer.sita {
 			get {return latitude;}
 			set {latitude = value;}
 		}
-		private int dangerlevel;
+        private int radius;
+        public int Radius
+        {
+            get { return radius; }
+            set { radius = value; }
+        }
+        private int dangerlevel;
 		public int Dangerlevel
         {
 			get {return dangerlevel;}
@@ -99,7 +105,7 @@ namespace CentralServer.sita {
         /// <param name="longitude">The X coördinate of the incident</param>
         /// <param name="latitude">The Y coördinate of the incident</param>
         /// <param name="dangerlevel">The level of danger for this incident</param>
-        public Incident(int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, string description)
+        public Incident(int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, int radius, string description)
         {
             this.id = id;
             this.amountVictims = amountVictims;
@@ -107,6 +113,7 @@ namespace CentralServer.sita {
             this.longitude = longitude;
             this.latitude = latitude;
             this.dangerlevel = dangerlevel;
+            this.radius = radius;
             this.description = description;
             backupRequests = new List<BackupRequest>();
             mediaItems = new List<Media>();

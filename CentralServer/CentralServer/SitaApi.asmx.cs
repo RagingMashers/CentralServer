@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Services;
 using CentralServer.sita;
+using CentralServer.Database;
+using MySql.Data.MySqlClient;
 
 namespace CentralServer
 {
@@ -17,6 +19,8 @@ namespace CentralServer
     // [System.Web.Script.Services.ScriptService]
     public class SitaApi : System.Web.Services.WebService
     {
+        DatabaseConnection databaseConnection;
+
         [WebMethod]
         public string Login(string username, string password)
         {
@@ -43,16 +47,81 @@ namespace CentralServer
         }
 
         [WebMethod]
-        public bool EditIncident(string token, int id, string name, string description, string chemicalCompound,
-            int dangerLevel, double volatility)
+        public int AddIncident(string token, int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, int radius, string description)
         {
-            return true;
+            databaseConnection = new DatabaseConnection();
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+
+            parameters.Add(new MySqlParameter("@id", id));
+            parameters.Add(new MySqlParameter("@description", description));
+            parameters.Add(new MySqlParameter("@amountVictims", amountVictims));
+            parameters.Add(new MySqlParameter("@amountWounded", amountWounded));
+            parameters.Add(new MySqlParameter("@longitude", longitude));
+            parameters.Add(new MySqlParameter("@latitude", latitude));
+            parameters.Add(new MySqlParameter("@radius", radius));
+            parameters.Add(new MySqlParameter("@dangerlevel", dangerlevel));
+
+            int affectedRowsInsert = databaseConnection.ExecuteNonQuery("INSERT INTO Incident VALUES (@id, @description, @amountVictims ,@amountWounded, @longitude, @latitude, @radius, @danger)", parameters);
+            databaseConnection.Close();
+
+            if (affectedRowsInsert == 0)
+                return -1;
+            else
+                return id;
+        }
+
+        [WebMethod]
+        public bool EditIncident(string token, int id, int amountVictims, int amountWounded, double longitude, double latitude, int radius, int dangerlevel, string description)
+        {
+            databaseConnection = new DatabaseConnection();
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+
+            parameters.Add(new MySqlParameter("@id", id));
+            parameters.Add(new MySqlParameter("@amountVictims", amountVictims));
+            parameters.Add(new MySqlParameter("@amountWounded", amountWounded));
+            parameters.Add(new MySqlParameter("@longitude", longitude));
+            parameters.Add(new MySqlParameter("@latitude", latitude));
+            parameters.Add(new MySqlParameter("@radius", radius));
+            parameters.Add(new MySqlParameter("@dangerlevel", dangerlevel));
+            parameters.Add(new MySqlParameter("@description", description));
+
+            int affectedRowsInsert = databaseConnection.ExecuteNonQuery("UPDATE Incident SET amountVictims = @amountVictims, amountWounded = @amountWounded, longitude = @longitude, latitude = @latitude, latitude = @latitude, dangerlevel = @dangerlevel, description = @description WHERE id = @id", parameters);
+            databaseConnection.Close();
+
+            return 1 == affectedRowsInsert;
         }
 
         [WebMethod]
         public Incident[] GetIncidents(string token, int start = 0, int limit = 20)
         {
-            return null;
+            databaseConnection = new DatabaseConnection();
+            string[] columnNames = new string[8];
+            columnNames[0] = "id";
+            columnNames[1] = "amountVictims";
+            columnNames[2] = "amountWounded";
+            columnNames[3] = "longitude";
+            columnNames[4] = "latitude";
+            columnNames[5] = "radius";
+            columnNames[6] = "dangerLevel";
+            columnNames[7] = "description";
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@idStart", start));
+            parameters.Add(new MySqlParameter("@idEnd", start + limit));
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Incident WHERE id > @idStart AND id < @idEnd", parameters, columnNames);
+            Incident[] incidents = new Incident[limit];
+
+            //int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, string description
+            for(int i = 0; i < dataSet.Count; i++)
+            {
+                string[] row = dataSet[i];
+                incidents[i] = (new Incident(int.Parse(row[0]), int.Parse(row[1]), int.Parse(row[2]), double.Parse(row[3]), double.Parse(row[4]), int.Parse(row[5]), int.Parse(row[6]), row[7]));
+            }
+
+            databaseConnection.Close();
+
+            return incidents;
         }
 
         [WebMethod]
