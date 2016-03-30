@@ -8,6 +8,7 @@ namespace CentralServer.sita {
 		public int Id
         {
 			get {return id;}
+            set { throw new AccessViolationException("Id can not be set!");}
 		}
 		private double longitude;
 		public double Longitude
@@ -36,9 +37,22 @@ namespace CentralServer.sita {
         }
 
         private List<Team> teams;
-        public IReadOnlyCollection<Team> Teams => teams.AsReadOnly();
-        #endregion
+        public List<Team> Teams
+        {
+            get { return teams; }
+            set { throw new AccessViolationException("Teams can not be set!");}
+        }
 
+	    #endregion
+
+        /// <summary>
+        /// DO NOT USE! FOR SERIALISATION ONLY!
+        /// </summary>
+	    public Resource()
+	    {
+	        
+	    }
+        
         /// <summary>
         /// Create instance of Resource
         /// </summary>

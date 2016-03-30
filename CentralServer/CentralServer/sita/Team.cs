@@ -9,6 +9,7 @@ namespace CentralServer.sita {
         public int Id
         {
             get { return id; }
+            set { throw new AccessViolationException("Id can not be set!"); }
         }
 
         private ServiceType type;
@@ -42,15 +43,32 @@ namespace CentralServer.sita {
             set { latitude = value; }
         }
         private readonly List<Person> personsInTeams;
-        public IReadOnlyCollection<Person> PersonsInTeam => personsInTeams.AsReadOnly();
+        public List<Person> PersonsInTeam
+        {
+            get { return personsInTeams; }
+            set { throw new AccessViolationException("PersonsInTeam can not be set!"); }
+        }
 
         private readonly List<Resource> resourcesAvailableToTeam;
-        public IReadOnlyCollection<Resource> ResourcesAvailableToTeam => resourcesAvailableToTeam.AsReadOnly();
+        public List<Resource> ResourcesAvailableToTeam
+        {
+            get { return resourcesAvailableToTeam; }
+            set { throw new AccessViolationException("ResourceAvailableToTeam can not be set!");}
+        }
+
         #endregion
 
         public Team(int id, ServiceType type, double longitude, double latitude)
             : this(id, type, longitude, latitude, DateTime.Now, DateTime.Now.AddDays(1))
         {
+        }
+
+        /// <summary>
+        /// DO NOT USE! FOR SERIALISATION ONLY!
+        /// </summary>
+        public Team()
+        {
+            
         }
 
         public Team(int id, ServiceType type, double longitude, double latitude, DateTime startDate, DateTime endDate)

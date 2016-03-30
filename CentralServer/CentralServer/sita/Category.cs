@@ -6,6 +6,7 @@ namespace CentralServer.sita {
 		public int Id
         {
 			get {return id;}
+            set { throw new AccessViolationException("Id can not be set!");}
 		}
 		private string name;
 		public string Name
@@ -20,6 +21,14 @@ namespace CentralServer.sita {
 			set {parent = value;}
 		}
         #endregion
+
+        /// <summary>
+        /// DO NOT USE! FOR SERIALISATION ONLY!
+        /// </summary>
+	    public Category()
+	    {
+	        
+	    }
 
         public Category(int id, string name, Category parent)
         {

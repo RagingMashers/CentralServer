@@ -5,6 +5,7 @@ namespace CentralServer.sita {
         private readonly int id;
 		public int Id {
 			get {return id;}
+            set { throw new AccessViolationException("Id can not be set!");}
 		}
 		private byte[] content;
 		public byte[] Content
@@ -64,6 +65,14 @@ namespace CentralServer.sita {
         }
 
         #endregion
+
+        /// <summary>
+        /// DO NOT USE! FOR SERIALISING ONLY!
+        /// </summary>
+	    public Media()
+	    {
+	        
+	    }
 
         public Media(int id, byte[] content, string mimeType, DateTime date, string source, 
             MediaAccepted accepted, string suggestion, Importance importance, Incident incident,
