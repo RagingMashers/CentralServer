@@ -39,6 +39,26 @@ namespace CentralServer.Tests.sita
         }
 
         [TestMethod]
+        public void SendMessage()
+        {
+            Boolean succes = sitaApi.SendMessage(null, 1, "ditIsEenTestBericht");
+            Assert.IsTrue(succes);
+
+            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTestBericht"));
+            Assert.AreEqual(1, affectedRowsDelete);
+        }
+
+        [TestMethod]
+        public void SendMessageWithMedia()
+        {
+            Boolean succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", 1);
+            Assert.IsTrue(succes);
+
+            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
+            Assert.AreEqual(1, affectedRowsDelete);
+        }
+        
+        [TestMethod]
         public void AddIncidentTest()
         {
             bool succes = sitaApi.AddIncident("testToken", 1, 1, 4.1, 1.0, 6, 6, "Grote brand");
