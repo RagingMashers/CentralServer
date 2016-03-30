@@ -6,6 +6,7 @@ namespace CentralServer.sita {
 		public int Id
         {
 			get {return id;}
+            set { throw new AccessViolationException("Can not be set!");}
 		}
 		private string name;
 		public string Name {
@@ -48,6 +49,14 @@ namespace CentralServer.sita {
             this.dangerLevel = dangerLevel;
             this.volatility = volatility;
         }
+
+        /// <summary>
+        /// DO NOT USE! FOR SERIALISATION ONLY!
+        /// </summary>
+	    public Toxication()
+	    {
+	        
+	    }
 	}
 
 }

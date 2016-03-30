@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Services;
 using CentralServer.sita;
+using CentralServer.Database;
+using MySql.Data.MySqlClient;
 
 namespace CentralServer
 {
@@ -17,6 +19,8 @@ namespace CentralServer
     // [System.Web.Script.Services.ScriptService]
     public class SitaApi : System.Web.Services.WebService
     {
+        DatabaseConnection databaseConnection; 
+
         [WebMethod]
         public string Login(string username, string password)
         {
@@ -32,7 +36,30 @@ namespace CentralServer
         [WebMethod]
         public Toxication[] GetToxications(string token)
         {
-            return null;
+            databaseConnection = new DatabaseConnection();
+
+            MySqlParameter param = new MySqlParameter();
+
+            string[] columnNames = new string[6];
+            columnNames[0] = "id";
+            columnNames[1] = "name";
+            columnNames[2] = "description";
+            columnNames[3] = "chemicalCompound";
+            columnNames[4] = "dangerLevel";
+            columnNames[5] = "volatility";
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT id, name, description, chemicalCompound, dangerLevel, volatility FROM toxication", param, columnNames);
+
+            databaseConnection.Close();
+
+            int rowCount = dataSet.Count;
+            Toxication[] toxications = new Toxication[rowCount];
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                toxications[i] = new Toxication(Int32.Parse(dataSet[i][0]), dataSet[i][1], dataSet[i][2], dataSet[i][3], Int32.Parse(dataSet[i][4]), Double.Parse(dataSet[i][5]));
+            }
+            return toxications;
         }
 
         [WebMethod]
