@@ -37,5 +37,25 @@ namespace CentralServer.Tests.sita
             int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM toxication WHERE name = @name", new MySqlParameter("@name", "TestGif"));
             Assert.AreEqual(1, affectedRowsDelete);
         }
+
+        [TestMethod]
+        public void SendMessage()
+        {
+            Boolean succes = sitaApi.SendMessage(null, 1, "ditIsEenTestBericht");
+            Assert.IsTrue(succes);
+
+            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTestBericht"));
+            Assert.AreEqual(1, affectedRowsDelete);
+        }
+
+        [TestMethod]
+        public void SendMessageWithMedia()
+        {
+            Boolean succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", 1);
+            Assert.IsTrue(succes);
+
+            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
+            Assert.AreEqual(1, affectedRowsDelete);
+        }
     }
 }

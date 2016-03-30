@@ -122,15 +122,38 @@ namespace CentralServer
         }
 
         [WebMethod]
-        public bool SendMessage(string token, int team, string message)
+        public bool SendMessage(string token, int teamId, string description)
         {
-            return true;
+            databaseConnection = new DatabaseConnection();
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@teamId", teamId));
+            parameters.Add(new MySqlParameter("@description", description));
+
+            int affectedRows = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description) VALUES (@teamId, @description)", parameters);
+            if (affectedRows == 1)
+            {
+                return true;
+            }
+            return false;
         }
 
         [WebMethod]
-        public bool SendMessageWithMedia(string token,int team, string message, int mediaId)
+        public bool SendMessageWithMedia(string token,int teamId, string description, int mediaId)
         {
-            return true;
+            databaseConnection = new DatabaseConnection();
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@teamId", teamId));
+            parameters.Add(new MySqlParameter("@description", description));
+            parameters.Add(new MySqlParameter("@mediaId", mediaId));
+
+            int affectedRows = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description, mediaId) VALUES (@teamId, @description, @mediaId)", parameters);
+            if (affectedRows == 1)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
