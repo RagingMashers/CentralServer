@@ -45,8 +45,8 @@ namespace CentralServer.Database
         }
 
         /// <summary>
-        /// Executes an query on the database.Use a while(reader.Read()) loop to iterate through the reader.
-        /// Close the reader and the connection after you are done!
+        /// Executes an query on the database. 
+        /// The data returned will be a list of rows of data.
         /// </summary>
         /// <param name="query">The SQL query.</param>
         /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection.</param>
