@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CentralServer.Database;
 using System.Collections.Generic;
 using CentralServer.sita;
+using MySql.Data.MySqlClient;
 
 namespace CentralServer.Tests.sita
 {
@@ -10,7 +11,6 @@ namespace CentralServer.Tests.sita
     public class SitaApiTest
     {
         SitaApi sitaApi = new SitaApi();
-        int incidentId = 18;
 
         [TestMethod]
         public void GetToxicationsTest()
@@ -44,7 +44,15 @@ namespace CentralServer.Tests.sita
         [TestMethod]
         public void EditIncidentTest()
         {
-            bool succes = sitaApi.EditIncident("testToken", incidentId, 1, 1, 4.1, 1.0, 6, 6, "Extreem Grote brand TEST");
+            DatabaseConnection connection = new DatabaseConnection();
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+
+            string[] columnNames = new string[1];
+            columnNames[0] = "MAX(id)";
+
+            parameters.Add(new MySqlParameter("@null", ""));
+
+            bool succes = sitaApi.EditIncident("testToken", int.Parse(connection.ExecuteQuery("SELECT MAX(id) FROM Incident", parameters, columnNames)[0][0]), 1, 1, 4.1, 1.0, 6, 6, "Extreem Grote brand TEST");
             Assert.IsTrue(succes);
         }
 
@@ -59,7 +67,15 @@ namespace CentralServer.Tests.sita
         [TestMethod]
         public void DeleteIncidentTest()
         {
-            bool succes = sitaApi.DeleteIncident("testToken", incidentId);
+            DatabaseConnection connection = new DatabaseConnection();
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+
+            string[] columnNames = new string[1];
+            columnNames[0] = "MAX(id)";
+
+            parameters.Add(new MySqlParameter("@null", ""));
+
+            bool succes = sitaApi.DeleteIncident("testToken", int.Parse(connection.ExecuteQuery("SELECT MAX(id) FROM Incident", parameters, columnNames)[0][0]));
             Assert.IsTrue(succes);
         }
     }
