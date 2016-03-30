@@ -15,7 +15,7 @@ namespace CentralServer.sita.Tests
 
         [TestInitialize()]
         public void Initialize() {
-            incident = new Incident(1, 1, 1, 1.0, 1.0, 1,"testdescription");
+            incident = new Incident(1, 1, 1, 1.0, 1.0, 1, 1,"testdescription");
         }
 
         [TestMethod()]
@@ -46,6 +46,12 @@ namespace CentralServer.sita.Tests
         public void LatitudeTest()
         {
             Assert.AreEqual(1.0, incident.Latitude, "\"LatitudeTest\" failed, ID Should be 1.0 but was" + incident.Latitude);
+        }
+
+        [TestMethod()]
+        public void RadiusTest()
+        {
+            Assert.AreEqual(1, incident.Radius, "\"RadiusTest\" failed, ID Should be 1 but was" + incident.Dangerlevel);
         }
 
         [TestMethod()]

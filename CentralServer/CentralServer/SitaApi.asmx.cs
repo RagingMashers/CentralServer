@@ -70,12 +70,11 @@ namespace CentralServer
         }
 
         [WebMethod]
-        public int AddIncident(string token, int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, int radius, string description)
+        public bool AddIncident(string token, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, int radius, string description)
         {
             databaseConnection = new DatabaseConnection();
             List<MySqlParameter> parameters = new List<MySqlParameter>();
 
-            parameters.Add(new MySqlParameter("@id", id));
             parameters.Add(new MySqlParameter("@description", description));
             parameters.Add(new MySqlParameter("@amountVictims", amountVictims));
             parameters.Add(new MySqlParameter("@amountWounded", amountWounded));
@@ -84,13 +83,10 @@ namespace CentralServer
             parameters.Add(new MySqlParameter("@radius", radius));
             parameters.Add(new MySqlParameter("@dangerlevel", dangerlevel));
 
-            int affectedRowsInsert = databaseConnection.ExecuteNonQuery("INSERT INTO Incident VALUES (@id, @description, @amountVictims ,@amountWounded, @longitude, @latitude, @radius, @danger)", parameters);
+            int affectedRowsInsert = databaseConnection.ExecuteNonQuery("INSERT INTO Incident (description, amountVictims , amountWounded, longitude, latitude, radius, dangerlevel) VALUES (@description, @amountVictims ,@amountWounded, @longitude, @latitude, @radius, @dangerlevel)", parameters);
             databaseConnection.Close();
 
-            if (affectedRowsInsert == 0)
-                return -1;
-            else
-                return id;
+            return affectedRowsInsert == 1;
         }
 
         [WebMethod]
@@ -115,6 +111,20 @@ namespace CentralServer
         }
 
         [WebMethod]
+        public bool DeleteIncident(string token, int id)
+        {
+            databaseConnection = new DatabaseConnection();
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+
+            parameters.Add(new MySqlParameter("@id", id));
+
+            int affectedRowsInsert = databaseConnection.ExecuteNonQuery("DELETE FROM Incident WHERE id = @id", parameters);
+            databaseConnection.Close();
+
+            return 1 == affectedRowsInsert;
+        }
+
+        [WebMethod]
         public Incident[] GetIncidents(string token, int start = 0, int limit = 20)
         {
             databaseConnection = new DatabaseConnection();
@@ -132,16 +142,16 @@ namespace CentralServer
             parameters.Add(new MySqlParameter("@idStart", start));
             parameters.Add(new MySqlParameter("@idEnd", start + limit));
 
-            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Incident WHERE id > @idStart AND id < @idEnd", parameters, columnNames);
-            Incident[] incidents = new Incident[limit];
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Incident WHERE id >= @idStart AND id <= @idEnd", parameters, columnNames);
+            Incident[] incidents = new Incident[limit + 1];
 
             //int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, string description
             for(int i = 0; i < dataSet.Count; i++)
             {
+                
                 string[] row = dataSet[i];
                 incidents[i] = (new Incident(int.Parse(row[0]), int.Parse(row[1]), int.Parse(row[2]), double.Parse(row[3]), double.Parse(row[4]), int.Parse(row[5]), int.Parse(row[6]), row[7]));
             }
-
             databaseConnection.Close();
 
             return incidents;
