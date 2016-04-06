@@ -97,6 +97,13 @@ namespace CentralServer.Database
             return null;
         }
 
+        /// <summary>
+        /// Executes an query on the database. 
+        /// The data returned will be a list of rows of data.
+        /// </summary>
+        /// <param name="query">The SQL query.</param>
+        /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection.</param>
+        /// <returns>The reader object of the query</returns>
         public MySqlDataReader ExecuteQueryReader(string query, List<MySqlParameter> parameters)
         {
             try
@@ -114,6 +121,43 @@ namespace CentralServer.Database
             {
                 Console.WriteLine(ex.Message);
                 
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Executes an query on the database. 
+        /// The object returned will be the first column of the first row of the query result.
+        /// </summary>
+        /// <param name="query">The SQL query.</param>
+        /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection.</param>
+        /// <returns>The first column of the first row or null</returns>
+        public object ExecuteScalar(string query, List<MySqlParameter> parameters)
+        {
+            try
+            {
+                if (Connect())
+                {
+                    var cmd = connection.CreateCommand();
+                    cmd.CommandText = query;
+                    cmd.Parameters.AddRange(parameters.ToArray());
+
+                    var result = cmd.ExecuteScalar();
+                
+                    return result is DBNull? null : result;
+
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                {
+                    Close();
+                }
             }
             return null;
         }
