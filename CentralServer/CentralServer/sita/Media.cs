@@ -50,15 +50,15 @@ namespace CentralServer.sita {
 			set {importance = value;}
 		}
 
-		private Incident incident;
-        public Incident Incident
+		private int incident;
+        public int Incident
         {
             get{return incident;}
             set{incident = value;}
         }
 
-		private Category category;
-        public Category Category
+		private int category;
+        public int Category
         {
             get{return category;}
             set{category = value;}
@@ -75,8 +75,8 @@ namespace CentralServer.sita {
 	    }
 
         public Media(int id, byte[] content, string mimeType, DateTime date, string source, 
-            MediaAccepted accepted, string suggestion, Importance importance, Incident incident,
-            Category category)
+            MediaAccepted accepted, string suggestion, Importance importance, int incident,
+            int category)
         {
             this.id = id;
             this.content = content;

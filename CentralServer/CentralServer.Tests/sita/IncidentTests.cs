@@ -94,7 +94,7 @@ namespace CentralServer.sita.Tests
         [TestMethod()]
         public void AttatchMediaTest()
         {
-            Media media = new Media(1, new byte[10], "", new DateTime(2016, 3, 16), "", MediaAccepted.NO, "", Importance.HIGH, incident, new Category(1,"test",null));
+            Media media = new Media(1, new byte[10], "", new DateTime(2016, 3, 16), "", MediaAccepted.NO, "", Importance.HIGH, incident.Id, new Category(1,"test",null).Id);
             incident.AttatchMedia(media);
             Assert.AreEqual(1, incident.MediaItems.Count, "\"AttatchMediaTest\" failed, it should have one item while it has " + incident.MediaItems.Count);
         }
