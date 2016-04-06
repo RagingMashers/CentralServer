@@ -188,7 +188,7 @@ namespace CentralServer
             if (databaseConnection == null)
                 databaseConnection = new DatabaseConnection();
 
-            string[] columnNames = new string[9];
+            var columnNames = new string[9];
             columnNames[0] = "id";
             columnNames[1] = "incidentId";
             columnNames[2] = "content";
@@ -199,23 +199,23 @@ namespace CentralServer
             columnNames[7] = "suggestion";
             columnNames[8] = "importance";
 
-            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            var parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@idStart", start));
             parameters.Add(new MySqlParameter("@idEnd", start + limit));
             parameters.Add(new MySqlParameter("@incidentId", incident));
 
-            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Media WHERE id >= @idStart AND id <= @idEnd AND IncidentId = @incidentId", parameters, columnNames);
-            Media[] media = new Media[limit + 1];
+            var dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Media WHERE id >= @idStart AND id <= @idEnd AND IncidentId = @incidentId", parameters, columnNames);
+            var media = new Media[limit + 1];
 
             columnNames = new string[1];
             columnNames[0] = "Categoryid";
 
-            for (int i = 0; i < dataSet.Count; i++)
+            for (var i = 0; i < dataSet.Count; i++)
             {
-                string[] row = dataSet[i];
+                var row = dataSet[i];
                 parameters.Clear();
                 parameters.Add(new MySqlParameter("@mediaId", int.Parse(row[0])));
-                int categoryId = int.Parse(databaseConnection.ExecuteQuery("SELECT Categoryid FROM media_category WHERE Mediaid = @mediaId", parameters, columnNames)[0][0]);
+                var categoryId = int.Parse((string)databaseConnection.ExecuteScalar("SELECT Categoryid FROM media_category WHERE Mediaid = @mediaId", parameters));
                 media[i] = (new Media(int.Parse(row[0]), new byte[0], row[2], DateTime.Parse(row[4]), row[5], (MediaAccepted)int.Parse(row[6]), row[7], (Importance)int.Parse(row[8]), int.Parse(row[1]), categoryId));
             }
             databaseConnection.Close();
