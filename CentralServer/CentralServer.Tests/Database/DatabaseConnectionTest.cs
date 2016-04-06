@@ -67,5 +67,20 @@ namespace CentralServer.Tests
             Assert.AreEqual(1, int.Parse(dataSet[0][0]));
             Assert.AreEqual(3, int.Parse(dataSet[0][1]));
         }
+
+        [TestMethod]
+        public void ExecuteQueryReader()
+        {
+            databaseConnection = new DatabaseConnection();
+            var parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@id",1));
+            var reader = databaseConnection.ExecuteQueryReader("SELECT mimeType, content FROM media WHERE id = @id LIMIT 1", parameters);
+            Assert.IsTrue(reader.HasRows);
+            reader.Read();
+            Assert.AreEqual(reader.GetString("mimeType"), "text/plain");//mimetype is correct
+            reader.Close();
+            databaseConnection.Close();
+            
+        }
     }
 }

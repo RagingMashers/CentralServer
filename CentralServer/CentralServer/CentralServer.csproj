@@ -93,6 +93,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="MediaDownload.ashx.cs">
+      <DependentUpon>MediaDownload.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SitaApi.asmx.cs">
       <DependentUpon>SitaApi.asmx</DependentUpon>
@@ -115,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="MediaDownload.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
