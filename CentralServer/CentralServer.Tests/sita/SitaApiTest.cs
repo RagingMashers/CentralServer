@@ -120,20 +120,6 @@ namespace CentralServer.Tests.sita
         }
 
         [TestMethod]
-        public void GetMediaOfIncidentFTest()
-        {
-            object[] dataSet = sitaApi.GetMediaOfIncidentF("", 1, "", 1, 0);
-
-            bool result = false;
-            if (dataSet.Length >= 1)
-            {
-                result = true;
-            }
-            Assert.IsNotNull(dataSet);
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
         public void GetTeamsNearIncidentTest()
         {
             // INSERT TEST ROWS
@@ -148,7 +134,7 @@ namespace CentralServer.Tests.sita
             Assert.AreEqual(1, rowsAffected);
 
             // TEST
-            Team[] dataSet = sitaApi.GetTeamsNearIncident(5.85757, 51.19417, 10);
+            Team[] dataSet = sitaApi.GetTeamsNearIncident("",5.85757, 51.19417, 10);
 
             Boolean result = false;
             if (dataSet.Length == 1)
@@ -176,21 +162,6 @@ namespace CentralServer.Tests.sita
         public void GetMediaTest()
         {
             object[] dataSet = sitaApi.GetMedia("", 1, 0);
-
-            bool result = false;
-            if (dataSet.Length >= 1)
-            {
-                result = true;
-            }
-
-            Assert.IsNotNull(dataSet);
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        public void GetMediaFTest()
-        {
-            object[] dataSet = sitaApi.GetMediaF("", "", 1, 0);
 
             bool result = false;
             if (dataSet.Length >= 1)
