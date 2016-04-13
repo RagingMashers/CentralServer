@@ -36,7 +36,8 @@ namespace CentralServer
         [WebMethod]
         public Toxication[] GetToxications(string token)
         {
-            databaseConnection = new DatabaseConnection();
+            if(databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
 
             MySqlParameter param = new MySqlParameter();
 
@@ -66,7 +67,8 @@ namespace CentralServer
         public bool AddToxication(string token, string name, string description, string chemicalCompound,
             int dangerLevel, double volatility)
         {
-            databaseConnection = new DatabaseConnection();
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
 
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@name", name));
@@ -87,7 +89,9 @@ namespace CentralServer
         [WebMethod]
         public bool AddIncident(string token, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, int radius, string description)
         {
-            databaseConnection = new DatabaseConnection();
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
             List<MySqlParameter> parameters = new List<MySqlParameter>();
 
             parameters.Add(new MySqlParameter("@description", description));
@@ -107,7 +111,9 @@ namespace CentralServer
         [WebMethod]
         public bool EditIncident(string token, int id, int amountVictims, int amountWounded, double longitude, double latitude, int radius, int dangerlevel, string description)
         {
-            databaseConnection = new DatabaseConnection();
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
             List<MySqlParameter> parameters = new List<MySqlParameter>();
 
             parameters.Add(new MySqlParameter("@id", id));
@@ -128,7 +134,9 @@ namespace CentralServer
         [WebMethod]
         public bool DeleteIncident(string token, int id)
         {
-            databaseConnection = new DatabaseConnection();
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
             List<MySqlParameter> parameters = new List<MySqlParameter>();
 
             parameters.Add(new MySqlParameter("@id", id));
@@ -142,7 +150,9 @@ namespace CentralServer
         [WebMethod]
         public Incident[] GetIncidents(string token, int start = 0, int limit = 20)
         {
-            databaseConnection = new DatabaseConnection();
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
             string[] columnNames = new string[8];
             columnNames[0] = "id";
             columnNames[1] = "amountVictims";
@@ -173,33 +183,174 @@ namespace CentralServer
         }
 
         [WebMethod]
-        public Media[] GetMediaOfIncident(string token, int incident, int start = 0, int limit = 20)
+        public object[] GetMediaOfIncident(string token, int incident, int start = 0, int limit = 20)
         {
-            return null;
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            var columnNames = new string[9];
+            columnNames[0] = "id";
+            columnNames[1] = "incidentId";
+            columnNames[2] = "content";
+            columnNames[3] = "mimeType";
+            columnNames[4] = "date";
+            columnNames[5] = "source";
+            columnNames[6] = "accepted";
+            columnNames[7] = "suggestion";
+            columnNames[8] = "importance";
+
+            var parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@idStart", start));
+            parameters.Add(new MySqlParameter("@idEnd", start + limit));
+            parameters.Add(new MySqlParameter("@incidentId", incident));
+
+            var dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Media WHERE id >= @idStart AND id <= @idEnd AND IncidentId = @incidentId", parameters, columnNames);
+            var media = new Media[limit + 1];
+
+            columnNames = new string[1];
+            columnNames[0] = "Categoryid";
+
+            for (var i = 0; i < dataSet.Count; i++)
+            {
+                var row = dataSet[i];
+                parameters.Clear();
+                parameters.Add(new MySqlParameter("@mediaId", int.Parse(row[0])));
+                var categoryId = int.Parse((string)databaseConnection.ExecuteScalar("SELECT Categoryid FROM media_category WHERE Mediaid = @mediaId", parameters));
+                media[i] = (new Media(int.Parse(row[0]), new byte[0], row[2], DateTime.Parse(row[4]), row[5], (MediaAccepted)int.Parse(row[6]), row[7], (Importance)int.Parse(row[8]), int.Parse(row[1]), categoryId));
+            }
+            databaseConnection.Close();
+
+            return media;
         }
 
         [WebMethod]
-        public Media[] GetMediaOfIncidentF(string token,int incident, string filter, int start = 0, int limit = 20)
+        public object[] GetMediaOfIncidentF(string token,int incident, string filter, int start = 0, int limit = 20)
         {
-            return null;
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            string[] columnNames = new string[9];
+            columnNames[0] = "id";
+            columnNames[1] = "incidentId";
+            columnNames[2] = "content";
+            columnNames[3] = "mimeType";
+            columnNames[4] = "date";
+            columnNames[5] = "source";
+            columnNames[6] = "accepted";
+            columnNames[7] = "suggestion";
+            columnNames[8] = "importance";
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@idStart", start));
+            parameters.Add(new MySqlParameter("@idEnd", start + limit));
+            parameters.Add(new MySqlParameter("@incidentId", incident));
+            parameters.Add(new MySqlParameter("@filter", filter));
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Media WHERE id >= @idStart AND id <= @idEnd AND IncidentId = @incidentId", parameters, columnNames);
+            Media[] media = new Media[limit + 1];
+
+            columnNames = new string[1];
+            columnNames[0] = "Categoryid";
+
+            for (int i = 0; i < dataSet.Count; i++)
+            {
+                string[] row = dataSet[i];
+                parameters.Clear();
+                parameters.Add(new MySqlParameter("@mediaId", int.Parse(row[0])));
+                int categoryId = int.Parse(databaseConnection.ExecuteQuery("SELECT Categoryid FROM media_category WHERE Mediaid = @mediaId", parameters, columnNames)[0][0]);
+                media[i] = (new Media(int.Parse(row[0]), new byte[0], row[2], DateTime.Parse(row[4]), row[5], (MediaAccepted)int.Parse(row[6]), row[7], (Importance)int.Parse(row[8]), int.Parse(row[1]), categoryId));
+            }
+            databaseConnection.Close();
+
+            return media;
         }
 
         [WebMethod]
-        public Media[] GetMedia(string token, int start = 0, int limit = 20)
+        public object[] GetMedia(string token, int start = 0, int limit = 20)
         {
-            return null;
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            string[] columnNames = new string[9];
+            columnNames[0] = "id";
+            columnNames[1] = "incidentId";
+            columnNames[2] = "content";
+            columnNames[3] = "mimeType";
+            columnNames[4] = "date";
+            columnNames[5] = "source";
+            columnNames[6] = "accepted";
+            columnNames[7] = "suggestion";
+            columnNames[8] = "importance";
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@idStart", start));
+            parameters.Add(new MySqlParameter("@idEnd", start + limit));
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Media WHERE id >= @idStart AND id <= @idEnd", parameters, columnNames);
+            Media[] media = new Media[limit + 1];
+
+            columnNames = new string[1];
+            columnNames[0] = "Categoryid";
+
+            for (int i = 0; i < dataSet.Count; i++)
+            {
+                string[] row = dataSet[i];
+                parameters.Clear();
+                parameters.Add(new MySqlParameter("@mediaId", int.Parse(row[0])));
+                int categoryId = int.Parse(databaseConnection.ExecuteQuery("SELECT Categoryid FROM media_category WHERE Mediaid = @mediaId", parameters, columnNames)[0][0]);
+                media[i] = (new Media(int.Parse(row[0]), new byte[0], row[2], DateTime.Parse(row[4]), row[5], (MediaAccepted)int.Parse(row[6]), row[7], (Importance)int.Parse(row[8]), int.Parse(row[1]), categoryId));
+            }
+            databaseConnection.Close();
+
+            return media;
         }
 
         [WebMethod]
-        public Media[] GetMediaF(string token, string filter, int start = 0, int limit = 20)
+        public object[] GetMediaF(string token, string filter, int start = 0, int limit = 20)
         {
-            return null;
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            string[] columnNames = new string[9];
+            columnNames[0] = "id";
+            columnNames[1] = "incidentId";
+            columnNames[2] = "content";
+            columnNames[3] = "mimeType";
+            columnNames[4] = "date";
+            columnNames[5] = "source";
+            columnNames[6] = "accepted";
+            columnNames[7] = "suggestion";
+            columnNames[8] = "importance";
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@idStart", start));
+            parameters.Add(new MySqlParameter("@idEnd", start + limit));
+            parameters.Add(new MySqlParameter("@filter", filter));
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Media WHERE id >= @idStart AND id <= @idEnd", parameters, columnNames);
+            Media[] media = new Media[limit + 1];
+
+            columnNames = new string[1];
+            columnNames[0] = "Categoryid";
+
+            for (int i = 0; i < dataSet.Count; i++)
+            {
+                string[] row = dataSet[i];
+                parameters.Clear();
+                parameters.Add(new MySqlParameter("@mediaId", int.Parse(row[0])));
+                int categoryId = int.Parse(databaseConnection.ExecuteQuery("SELECT Categoryid FROM media_category WHERE Mediaid = @mediaId", parameters, columnNames)[0][0]);
+                media[i] = (new Media(int.Parse(row[0]), new byte[0], row[2], DateTime.Parse(row[4]), row[5], (MediaAccepted)int.Parse(row[6]), row[7], (Importance)int.Parse(row[8]), int.Parse(row[1]), categoryId));
+            }
+            databaseConnection.Close();
+
+            return media;
         }
 
         [WebMethod]
         public bool SendMessage(string token, int teamId, string description)
         {
-            databaseConnection = new DatabaseConnection();
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
 
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@teamId", teamId));
@@ -216,7 +367,8 @@ namespace CentralServer
         [WebMethod]
         public bool SendMessageWithMedia(string token,int teamId, string description, int mediaId)
         {
-            databaseConnection = new DatabaseConnection();
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
 
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@teamId", teamId));

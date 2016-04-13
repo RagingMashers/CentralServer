@@ -18,7 +18,7 @@ namespace CentralServer.Tests.sita
         {
             Toxication[] dataSet = sitaApi.GetToxications(null);
 
-            Boolean result = false;
+            bool result = false;
             if (dataSet.Length >= 1)
             {
                 result = true;
@@ -32,7 +32,7 @@ namespace CentralServer.Tests.sita
         public void AddToxicationTest()
         {
 
-            Boolean succes = sitaApi.AddToxication(null, "TestGif", "Testbeschrijving", "O213", 4, 1.0);
+            bool succes = sitaApi.AddToxication(null, "TestGif", "Testbeschrijving", "O213", 4, 1.0);
             Assert.IsTrue(succes);
 
             int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM toxication WHERE name = @name", new MySqlParameter("@name", "TestGif"));
@@ -42,7 +42,7 @@ namespace CentralServer.Tests.sita
         [TestMethod]
         public void SendMessage()
         {
-            Boolean succes = sitaApi.SendMessage(null, 1, "ditIsEenTestBericht");
+            bool succes = sitaApi.SendMessage(null, 1, "ditIsEenTestBericht");
             Assert.IsTrue(succes);
 
             int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTestBericht"));
@@ -52,7 +52,7 @@ namespace CentralServer.Tests.sita
         [TestMethod]
         public void SendMessageWithMedia()
         {
-            Boolean succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", 1);
+            bool succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", 1);
             Assert.IsTrue(succes);
 
             int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
@@ -105,6 +105,35 @@ namespace CentralServer.Tests.sita
         }
 
         [TestMethod]
+        public void GetMediaOfIncidentTest()
+        {
+            object[] dataSet = sitaApi.GetMediaOfIncident("", 1, 1, 0);
+
+            bool result = false;
+            if (dataSet.Length >= 1)
+            {
+                result = true;
+            }
+
+            Assert.IsNotNull(dataSet);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void GetMediaOfIncidentFTest()
+        {
+            object[] dataSet = sitaApi.GetMediaOfIncidentF("", 1, "", 1, 0);
+
+            bool result = false;
+            if (dataSet.Length >= 1)
+            {
+                result = true;
+            }
+            Assert.IsNotNull(dataSet);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
         public void GetTeamsNearIncidentTest()
         {
             // INSERT TEST ROWS
@@ -126,7 +155,6 @@ namespace CentralServer.Tests.sita
             {
                 result = true;
             }
-
             Assert.IsNotNull(dataSet);
             Assert.IsTrue(result);
 
@@ -142,6 +170,36 @@ namespace CentralServer.Tests.sita
             rowsAffected = 0;
             rowsAffected = databaseConnection.ExecuteNonQuery("DELETE FROM Team WHERE longitude = 4.89517 AND startDate = '1900-03-06'", new MySqlParameter());
             Assert.AreEqual(1, rowsAffected);
+        }
+
+        [TestMethod]
+        public void GetMediaTest()
+        {
+            object[] dataSet = sitaApi.GetMedia("", 1, 0);
+
+            bool result = false;
+            if (dataSet.Length >= 1)
+            {
+                result = true;
+            }
+
+            Assert.IsNotNull(dataSet);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void GetMediaFTest()
+        {
+            object[] dataSet = sitaApi.GetMediaF("", "", 1, 0);
+
+            bool result = false;
+            if (dataSet.Length >= 1)
+            {
+                result = true;
+            }
+
+            Assert.IsNotNull(dataSet);
+            Assert.IsTrue(result);
         }
     }
 }
