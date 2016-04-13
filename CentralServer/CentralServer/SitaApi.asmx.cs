@@ -384,13 +384,14 @@ namespace CentralServer
         }
 
         [WebMethod]
-        public Team[] GetTeamsNearIncident(double longitude, double latitude)
+        public Team[] GetTeamsNearIncident(double longitude, double latitude, int radius)
         {
             databaseConnection = new DatabaseConnection();
 
             var parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@long", longitude));
             parameters.Add(new MySqlParameter("@lat", latitude));
+            parameters.Add(new MySqlParameter("@radius", radius));
 
             var columnNames = new string[6];
             columnNames[0] = "id";
@@ -401,7 +402,7 @@ namespace CentralServer
             columnNames[5] = "latitude";
 
             var dataSet = databaseConnection.ExecuteQuery(
-                "SELECT id, type, startDate, endDate, longitude, latitude FROM team WHERE endDate IS NULL HAVING GETDISTANCE(@lat, @long, latitude, longitude) < 10", parameters, columnNames
+                "SELECT id, type, startDate, endDate, longitude, latitude FROM team WHERE endDate IS NULL HAVING GETDISTANCE(@lat, @long, latitude, longitude) < @radius", parameters, columnNames
                 );
 
             var amountOfRows = dataSet.Count;

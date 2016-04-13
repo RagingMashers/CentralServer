@@ -148,7 +148,7 @@ namespace CentralServer.Tests.sita
             Assert.AreEqual(1, rowsAffected);
 
             // TEST
-            Team[] dataSet = sitaApi.GetTeamsNearIncident(5.85757, 51.19417);
+            Team[] dataSet = sitaApi.GetTeamsNearIncident(5.85757, 51.19417, 10);
 
             Boolean result = false;
             if (dataSet.Length == 1)
