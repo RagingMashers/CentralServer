@@ -165,7 +165,7 @@ namespace CentralServer
             {
                 
                 string[] row = dataSet[i];
-                incidents[i] = (new Incident(int.Parse(row[0]), int.Parse(row[1]), int.Parse(row[2]), double.Parse(row[3]), double.Parse(row[4]), int.Parse(row[5]), int.Parse(row[6]), row[7]));
+                incidents[i] = new Incident(int.Parse(row[0]), int.Parse(row[1]), int.Parse(row[2]), double.Parse(row[3]), double.Parse(row[4]), int.Parse(row[5]), int.Parse(row[6]), row[7]);
             }
             databaseConnection.Close();
 
@@ -229,6 +229,42 @@ namespace CentralServer
                 return true;
             }
             return false;
+        }
+
+        [WebMethod]
+        public Team[] GetTeamsNearIncident(double longitude, double latitude)
+        {
+            databaseConnection = new DatabaseConnection();
+
+            var parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@long", longitude));
+            parameters.Add(new MySqlParameter("@lat", latitude));
+
+            var columnNames = new string[6];
+            columnNames[0] = "id";
+            columnNames[1] = "type";
+            columnNames[2] = "startDate";
+            columnNames[3] = "endDate";
+            columnNames[4] = "longitude";
+            columnNames[5] = "latitude";
+
+            var dataSet = databaseConnection.ExecuteQuery(
+                "SELECT id, type, startDate, endDate, longitude, latitude FROM team WHERE endDate IS NULL HAVING GETDISTANCE(@lat, @long, latitude, longitude) < 10", parameters, columnNames
+                );
+
+            var amountOfRows = dataSet.Count;
+            var teams = new Team[amountOfRows];
+
+            //int id, int type, DateTime startDate, DateTime endDate, double longitude, double latitude
+            for (var i = 0; i < dataSet.Count; i++)
+            {
+
+                var row = dataSet[i];
+                teams[i] = new Team(int.Parse(row[0]), (ServiceType)int.Parse(row[1]), Double.Parse(row[4]), Double.Parse(row[5]), Convert.ToDateTime(row[2]), default(DateTime));
+            }
+            databaseConnection.Close();
+
+            return teams;
         }
     }
 }

@@ -77,7 +77,15 @@ namespace CentralServer.Database
 
                             foreach (string columnName in columnNames)
                             {
-                                dataRow[count] = reader.GetString(columnName);
+                                if (reader.IsDBNull(count))
+                                {
+                                    dataRow[count] = "";
+                                }
+                                else
+                                {
+                                    dataRow[count] = reader.GetString(columnName);
+                                }
+
                                 count++;
                             }
 

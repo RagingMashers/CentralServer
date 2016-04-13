@@ -31,6 +31,7 @@ namespace CentralServer.Tests.sita
         [TestMethod]
         public void AddToxicationTest()
         {
+
             Boolean succes = sitaApi.AddToxication(null, "TestGif", "Testbeschrijving", "O213", 4, 1.0);
             Assert.IsTrue(succes);
 
@@ -101,6 +102,46 @@ namespace CentralServer.Tests.sita
 
             bool succes = sitaApi.DeleteIncident("testToken", int.Parse(connection.ExecuteQuery("SELECT MAX(id) FROM Incident", parameters, columnNames)[0][0]));
             Assert.IsTrue(succes);
+        }
+
+        [TestMethod]
+        public void GetTeamsNearIncidentTest()
+        {
+            // INSERT TEST ROWS
+            bool succes = sitaApi.AddIncident(null, 2, 12, 5.85757, 51.19417, 1, 400, "TestTerroristische aanslag");
+            Assert.IsTrue(succes);
+
+            int rowsAffected = databaseConnection.ExecuteNonQuery("INSERT INTO Team (type, startDate, endDate, longitude, latitude) VALUES (2, '1900-03-06', null, 5.82840, 51.21805)", new MySqlParameter());
+            Assert.AreEqual(1, rowsAffected);
+
+            rowsAffected = 0;
+            rowsAffected = databaseConnection.ExecuteNonQuery("INSERT INTO Team (type, startDate, endDate, longitude, latitude) VALUES (3, '1900-03-06', null, 	4.89517, 52.37022)", new MySqlParameter());
+            Assert.AreEqual(1, rowsAffected);
+
+            // TEST
+            Team[] dataSet = sitaApi.GetTeamsNearIncident(5.85757, 51.19417);
+
+            Boolean result = false;
+            if (dataSet.Length == 1)
+            {
+                result = true;
+            }
+
+            Assert.IsNotNull(dataSet);
+            Assert.IsTrue(result);
+
+            // DELETE TEST ROWS
+            rowsAffected = 0;
+            rowsAffected = databaseConnection.ExecuteNonQuery("DELETE FROM Incident WHERE description = 'TestTerroristische aanslag'", new MySqlParameter());
+            Assert.AreEqual(1, rowsAffected);
+
+            rowsAffected = 0;
+            rowsAffected = databaseConnection.ExecuteNonQuery("DELETE FROM Team WHERE longitude = 5.82840 AND startDate = '1900-03-06'", new MySqlParameter());
+            Assert.AreEqual(1, rowsAffected);
+
+            rowsAffected = 0;
+            rowsAffected = databaseConnection.ExecuteNonQuery("DELETE FROM Team WHERE longitude = 4.89517 AND startDate = '1900-03-06'", new MySqlParameter());
+            Assert.AreEqual(1, rowsAffected);
         }
     }
 }
