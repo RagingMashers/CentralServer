@@ -223,7 +223,7 @@ namespace CentralServer
                         databaseConnection.ExecuteScalar(
                             "SELECT Categoryid FROM media_category WHERE Mediaid = @mediaId", parameters).ToString());
                 media[i] =
-                    (new Media(int.Parse(row[0]), new byte[0], row[2], DateTime.Parse(row[4]), row[5],
+                    (new Media(int.Parse(row[0]), new byte[0], row[3], DateTime.Parse(row[4]), row[5],
                         (MediaAccepted) int.Parse(row[6]), row[7], (Importance) int.Parse(row[8]), int.Parse(row[1]),
                         categoryId));
             }
@@ -265,7 +265,7 @@ namespace CentralServer
                 parameters.Clear();
                 parameters.Add(new MySqlParameter("@mediaId", int.Parse(row[0])));
                 int categoryId = int.Parse(databaseConnection.ExecuteQuery("SELECT Categoryid FROM media_category WHERE Mediaid = @mediaId", parameters, columnNames)[0][0]);
-                media[i] = (new Media(int.Parse(row[0]), new byte[0], row[2], DateTime.Parse(row[4]), row[5], (MediaAccepted)int.Parse(row[6]), row[7], (Importance)int.Parse(row[8]), int.Parse(row[1]), categoryId));
+                media[i] = (new Media(int.Parse(row[0]), new byte[0], row[3], DateTime.Parse(row[4]), row[5], (MediaAccepted)int.Parse(row[6]), row[7], (Importance)int.Parse(row[8]), int.Parse(row[1]), categoryId));
             }
             databaseConnection.Close();
 

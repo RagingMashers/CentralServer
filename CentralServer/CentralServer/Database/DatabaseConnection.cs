@@ -63,10 +63,11 @@ namespace CentralServer.Database
                     var reader = cmd.ExecuteReader();
                     if (reader.HasRows)
                     {
-                        var dataRow = new string[columnNames.Length];
+                        
 
                         while (reader.Read())
                         {
+                            var dataRow = new string[columnNames.Length];
                             var count = 0;
 
                             foreach (var columnName in columnNames)
