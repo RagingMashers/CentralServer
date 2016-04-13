@@ -37,7 +37,7 @@ namespace CentralServer.Database
         /// </summary>
         public void Close()
         {
-            connection?.Close();
+            if (connection != null) connection.Close();
         }
 
         /// <summary>
@@ -71,7 +71,15 @@ namespace CentralServer.Database
 
                             foreach (var columnName in columnNames)
                             {
-                                dataRow[count] = reader.GetString(columnName);
+                                if (reader.IsDBNull(count))
+                                {
+                                    dataRow[count] = "";
+                                }
+                                else
+                                {
+                                    dataRow[count] = reader.GetString(columnName);
+                                }
+
                                 count++;
                             }
 
