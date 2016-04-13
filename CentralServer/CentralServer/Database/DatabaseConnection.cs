@@ -37,7 +37,7 @@ namespace CentralServer.Database
         /// </summary>
         public void Close()
         {
-            connection?.Close();
+            if (connection != null) connection.Close();
         }
 
         /// <summary>

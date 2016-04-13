@@ -215,7 +215,7 @@ namespace CentralServer
                 var row = dataSet[i];
                 parameters.Clear();
                 parameters.Add(new MySqlParameter("@mediaId", int.Parse(row[0])));
-                var categoryId = int.Parse((string)databaseConnection.ExecuteScalar("SELECT Categoryid FROM media_category WHERE Mediaid = @mediaId", parameters));
+                var categoryId = int.Parse(databaseConnection.ExecuteScalar("SELECT Categoryid FROM media_category WHERE Mediaid = @mediaId", parameters).ToString());
                 media[i] = (new Media(int.Parse(row[0]), new byte[0], row[2], DateTime.Parse(row[4]), row[5], (MediaAccepted)int.Parse(row[6]), row[7], (Importance)int.Parse(row[8]), int.Parse(row[1]), categoryId));
             }
             databaseConnection.Close();
