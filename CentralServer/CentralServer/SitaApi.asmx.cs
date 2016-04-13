@@ -53,7 +53,7 @@ namespace CentralServer
 
             databaseConnection.Close();
 
-            int rowCount = dataSet.Count;
+            int rowCount = (dataSet?.Count??0);
             Toxication[] toxications = new Toxication[rowCount];
 
             for (int i = 0; i < rowCount; i++)
@@ -171,7 +171,7 @@ namespace CentralServer
             Incident[] incidents = new Incident[limit + 1];
 
             //int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, string description
-            for(int i = 0; i < dataSet.Count; i++)
+            for(int i = 0; i < (dataSet?.Count??0); i++)
             {
                 
                 string[] row = dataSet[i];
@@ -213,7 +213,7 @@ namespace CentralServer
             columnNames = new string[1];
             columnNames[0] = "Categoryid";
 
-            for (var i = 0; i < dataSet.Count; i++)
+            for (var i = 0; i < (dataSet?.Count??0); i++)
             {
                 var row = dataSet[i];
                 parameters.Clear();
@@ -259,7 +259,7 @@ namespace CentralServer
             columnNames = new string[1];
             columnNames[0] = "Categoryid";
 
-            for (int i = 0; i < dataSet.Count; i++)
+            for (int i = 0; i < (dataSet?.Count??0); i++)
             {
                 string[] row = dataSet[i];
                 parameters.Clear();
@@ -331,11 +331,11 @@ namespace CentralServer
                 "SELECT id, type, startDate, endDate, longitude, latitude FROM team WHERE endDate IS NULL HAVING GETDISTANCE(@lat, @long, latitude, longitude) < @radius", parameters, columnNames
                 );
 
-            var amountOfRows = dataSet.Count;
+            var amountOfRows = dataSet?.Count??0;
             var teams = new Team[amountOfRows];
 
             //int id, int type, DateTime startDate, DateTime endDate, double longitude, double latitude
-            for (var i = 0; i < dataSet.Count; i++)
+            for (var i = 0; i < (dataSet?.Count??0); i++)
             {
 
                 var row = dataSet[i];
