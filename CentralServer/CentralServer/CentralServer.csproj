@@ -102,6 +102,7 @@
       <DependentUpon>SitaApi.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="sita\ActionPlan.cs" />
     <Compile Include="sita\BackupRequest.cs" />
     <Compile Include="sita\Category.cs" />
     <Compile Include="Database\DatabaseConnection.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="sita\Resource.cs" />
     <Compile Include="sita\ResourseType.cs" />
     <Compile Include="sita\ServiceType.cs" />
+    <Compile Include="sita\Task.cs" />
     <Compile Include="sita\Team.cs" />
     <Compile Include="sita\Toxication.cs" />
   </ItemGroup>

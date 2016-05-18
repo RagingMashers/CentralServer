@@ -283,6 +283,8 @@ namespace CentralServer
             parameters.Add(new MySqlParameter("@description", description));
 
             int affectedRows = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description) VALUES (@teamId, @description)", parameters);
+            
+            databaseConnection.Close();
             if (affectedRows == 1)
             {
                 return true;
@@ -291,22 +293,31 @@ namespace CentralServer
         }
 
         [WebMethod]
-        public bool SendMessageWithMedia(string token,int teamId, string description, int mediaId)
+        public bool SendMessageWithMedia(string token,int teamId, string description,  int[] mediaIds)
         {
             if (databaseConnection == null)
                 databaseConnection = new DatabaseConnection();
 
             List<MySqlParameter> parameters = new List<MySqlParameter>();
-            parameters.Add(new MySqlParameter("@teamId", teamId));
-            parameters.Add(new MySqlParameter("@description", description));
-            parameters.Add(new MySqlParameter("@mediaId", mediaId));
+            var succes = true;
 
-            int affectedRows = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description, mediaId) VALUES (@teamId, @description, @mediaId)", parameters);
-            if (affectedRows == 1)
+            foreach (int mediaId in mediaIds)
             {
-                return true;
+                parameters.Clear();
+                parameters.Add(new MySqlParameter("@teamId", teamId));
+                parameters.Add(new MySqlParameter("@description", description));
+                parameters.Add(new MySqlParameter("@mediaId", mediaId));
+
+                int affectedRowsMessage = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description) VALUES (@teamId, @description)", parameters);
+                int affectedRowsMedia_Message = databaseConnection.ExecuteNonQuery("INSERT INTO media_message (Mediaid, Messageid) VALUES (@mediaId, (SELECT MAX(id) FROM Message WHERE description = @description))", parameters);
+                if (affectedRowsMessage != 1 || affectedRowsMedia_Message != 1)
+                {
+                    succes = false;
+                }
             }
-            return false;
+
+            databaseConnection.Close();
+            return succes;
         }
 
         [WebMethod]
@@ -344,6 +355,166 @@ namespace CentralServer
             databaseConnection.Close();
 
             return teams;
+        }
+
+        [WebMethod]
+        public ActionPlan[] GetActionPlans(string token)
+        {
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            MySqlParameter param = new MySqlParameter();
+
+            string[] columnNames = new string[2];
+            columnNames[0] = "id";
+            columnNames[1] = "name";
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT id, name FROM actionplan", param, columnNames);
+
+            databaseConnection.Close();
+
+            int rowCount = (dataSet?.Count ?? 0);
+            ActionPlan[] actionPlans = new ActionPlan[rowCount];
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                actionPlans[i] = new ActionPlan(Int32.Parse(dataSet[i][0]), dataSet[i][1]);
+                actionPlans[i].AddTasks(GetTasksFromActionPlan(token, actionPlans[i].Id).ToList());
+            }
+            return actionPlans;
+        }
+
+        [WebMethod]
+        public Task[] GetTasks(string token)
+        {
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            MySqlParameter param = new MySqlParameter();
+
+            string[] columnNames = new string[2];
+            columnNames[0] = "id";
+            columnNames[1] = "description";
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT id, description FROM task", param, columnNames);
+
+            databaseConnection.Close();
+
+            int rowCount = (dataSet?.Count ?? 0);
+            Task[] tasks = new Task[rowCount];
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                tasks[i] = new Task(Int32.Parse(dataSet[i][0]), dataSet[i][1]);
+            }
+            return tasks;
+        }
+
+        [WebMethod]
+        public Task[] GetTasksFromActionPlan(string token, int actionPlanId)
+        {
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            MySqlParameter parameter = new MySqlParameter();
+            parameter  = new MySqlParameter("@actionPlanId", actionPlanId);
+
+            string[] columnNames = new string[2];
+            columnNames[0] = "id";
+            columnNames[1] = "description";
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM TASK WHERE id IN (SELECT Taskid FROM actionplan_task WHERE ActionPlanid = @actionPlanId ORDER BY sequenceNumber)", parameter, columnNames);
+
+            databaseConnection.Close();
+
+            int rowCount = (dataSet?.Count ?? 0);
+            Task[] tasks = new Task[rowCount];
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                tasks[i] = new Task(Int32.Parse(dataSet[i][0]), dataSet[i][1]);
+            }
+            return tasks;
+        }
+
+        [WebMethod]
+        public bool AddTask(string token, string description)
+        {
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@description", description));
+
+            int rowsAffected = databaseConnection.ExecuteNonQuery("INSERT INTO task (description) VALUES (@description)", parameters);
+            if (rowsAffected == 1)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        [WebMethod]
+        public bool AddActionPlan(string token, string name, int[] taskIds)
+        {
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@name", name));
+
+            int rowsAffected = databaseConnection.ExecuteNonQuery("INSERT INTO actionplan (name) VALUES (@name)", parameters);
+
+            int count = 0;
+
+            if (rowsAffected == 1)
+            {
+                foreach (int taskId in taskIds)
+                {
+                    databaseConnection.ExecuteNonQuery("INSERT INTO actionplan_task (ActionPlanid, TaskId, sequenceNumber) VALUES ((SELECT MAX(id) FROM actionPlan), @taskId, " + (count + 1) + ")", new MySqlParameter("@taskId", taskIds[count]));
+                    count++;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        [WebMethod]
+        public bool EditActionPlan(string token, string name, int[] taskIds)
+        {
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@name", name));
+
+            databaseConnection.ExecuteNonQuery("DELETE FROM actionplan_task WHERE ActionPlanId IN (SELECT id FROM actionplan WHERE name = @name)", new MySqlParameter("@name", "Test"));
+            int id = (Int32.Parse(databaseConnection.ExecuteScalar("SELECT id FROM actionplan WHERE name = @name", parameters).ToString()));
+            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM actionplan WHERE name = @name", new MySqlParameter("@name", "Test"));
+
+            if (affectedRowsDelete == 1)
+            {
+                parameters.Add(new MySqlParameter("@id", id));
+
+                int rowsAffected = databaseConnection.ExecuteNonQuery("INSERT INTO actionplan (id, name) VALUES (@id, @name)", parameters);
+                int count = 0;
+
+                if (rowsAffected == 1)
+                {
+                    foreach (int taskId in taskIds)
+                    {
+                        databaseConnection.ExecuteNonQuery("INSERT INTO actionplan_task (ActionPlanid, TaskId, sequenceNumber) VALUES ((SELECT MAX(id) FROM actionPlan), @taskId, " + (count + 1) + ")", new MySqlParameter("@taskId", taskIds[count]));
+                        count++;
+                    }
+
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
