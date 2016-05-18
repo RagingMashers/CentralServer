@@ -72,7 +72,7 @@ namespace CentralServer.Tests.sita
             affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
             Assert.AreEqual(2, affectedRowsDelete);
         }
-        
+
         [TestMethod]
         public void AddIncidentTest()
         {
@@ -148,7 +148,7 @@ namespace CentralServer.Tests.sita
             Assert.AreEqual(1, rowsAffected);
 
             // TEST
-            Team[] dataSet = sitaApi.GetTeamsNearIncident("",5.85757, 51.19417, 10);
+            Team[] dataSet = sitaApi.GetTeamsNearIncident("", 5.85757, 51.19417, 10);
 
             Boolean result = false;
             if (dataSet.Length == 1)
@@ -215,6 +215,48 @@ namespace CentralServer.Tests.sita
 
             Assert.IsNotNull(dataSet);
             Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void AddTaskTest()
+        {
+            bool succes = sitaApi.AddTask(null, "Test");
+            Assert.IsTrue(succes);
+
+            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM task WHERE description = @description", new MySqlParameter("@description", "Test"));
+            Assert.AreEqual(1, affectedRowsDelete);
+        }
+
+        [TestMethod]
+        public void AddActionPlanTest()
+        {
+            int[] taskId = new int[2];
+            taskId[0] = 1;
+            taskId[1] = 2;
+            bool succes = sitaApi.AddActionPlan(null, "Test", taskId);
+            Assert.IsTrue(succes);
+
+            databaseConnection.ExecuteNonQuery("DELETE FROM actionplan_task WHERE ActionPlanId IN (SELECT id FROM actionplan WHERE name = @name)", new MySqlParameter("@name", "Test"));
+            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM actionplan WHERE name = @name", new MySqlParameter("@name", "Test"));
+            Assert.AreEqual(1, affectedRowsDelete);
+        }
+
+        [TestMethod]
+        public void EditActionPlanTest()
+        {
+            int[] taskId = new int[2];
+            taskId[0] = 1;
+            taskId[1] = 2;
+            sitaApi.AddActionPlan(null, "Test", taskId);
+
+            taskId[0] = 1;
+            taskId[1] = 3;
+            bool succes = sitaApi.EditActionPlan(null, "Test", taskId);
+            Assert.IsTrue(succes);
+
+            databaseConnection.ExecuteNonQuery("DELETE FROM actionplan_task WHERE ActionPlanId IN (SELECT id FROM actionplan WHERE name = @name)", new MySqlParameter("@name", "Test"));
+            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM actionplan WHERE name = @name", new MySqlParameter("@name", "Test"));
+            Assert.AreEqual(1, affectedRowsDelete);
         }
     }
 }
