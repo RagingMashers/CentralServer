@@ -172,5 +172,35 @@ namespace CentralServer.Tests.sita
             Assert.IsNotNull(dataSet);
             Assert.IsTrue(result);
         }
+
+        [TestMethod]
+        public void GetTaskTest()
+        {
+            object[] dataSet = sitaApi.GetTasks("");
+
+            bool result = false;
+            if (dataSet.Length >= 1)
+            {
+                result = true;
+            }
+
+            Assert.IsNotNull(dataSet);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void GetActionPlanTest()
+        {
+            object[] dataSet = sitaApi.GetTasks("");
+
+            bool result = false;
+            if (dataSet.Length >= 1)
+            {
+                result = true;
+            }
+
+            Assert.IsNotNull(dataSet);
+            Assert.IsTrue(result);
+        }
     }
 }
