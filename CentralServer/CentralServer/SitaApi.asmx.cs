@@ -283,6 +283,8 @@ namespace CentralServer
             parameters.Add(new MySqlParameter("@description", description));
 
             int affectedRows = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description) VALUES (@teamId, @description)", parameters);
+            
+            databaseConnection.Close();
             if (affectedRows == 1)
             {
                 return true;
@@ -291,22 +293,31 @@ namespace CentralServer
         }
 
         [WebMethod]
-        public bool SendMessageWithMedia(string token,int teamId, string description, int mediaId)
+        public bool SendMessageWithMedia(string token,int teamId, string description,  int[] mediaIds)
         {
             if (databaseConnection == null)
                 databaseConnection = new DatabaseConnection();
 
             List<MySqlParameter> parameters = new List<MySqlParameter>();
-            parameters.Add(new MySqlParameter("@teamId", teamId));
-            parameters.Add(new MySqlParameter("@description", description));
-            parameters.Add(new MySqlParameter("@mediaId", mediaId));
+            var succes = true;
 
-            int affectedRows = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description, mediaId) VALUES (@teamId, @description, @mediaId)", parameters);
-            if (affectedRows == 1)
+            foreach (int mediaId in mediaIds)
             {
-                return true;
+                parameters.Clear();
+                parameters.Add(new MySqlParameter("@teamId", teamId));
+                parameters.Add(new MySqlParameter("@description", description));
+                parameters.Add(new MySqlParameter("@mediaId", mediaId));
+
+                int affectedRowsMessage = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description) VALUES (@teamId, @description)", parameters);
+                int affectedRowsMedia_Message = databaseConnection.ExecuteNonQuery("INSERT INTO media_message (Mediaid, Messageid) VALUES (@mediaId, (SELECT MAX(id) FROM Message WHERE description = @description))", parameters);
+                if (affectedRowsMessage != 1 || affectedRowsMedia_Message != 1)
+                {
+                    succes = false;
+                }
             }
-            return false;
+
+            databaseConnection.Close();
+            return succes;
         }
 
         [WebMethod]

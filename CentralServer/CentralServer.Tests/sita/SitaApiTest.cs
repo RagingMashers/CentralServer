@@ -52,11 +52,25 @@ namespace CentralServer.Tests.sita
         [TestMethod]
         public void SendMessageWithMedia()
         {
-            bool succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", 1);
+            int[] mediaIds = new int[1]{1};
+            
+            bool succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", mediaIds);
             Assert.IsTrue(succes);
 
+            int affectedRowsDelete2 = databaseConnection.ExecuteNonQuery("DELETE FROM media_message WHERE messageid IN (SELECT id FROM message WHERE description = @description)", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
+            Assert.AreEqual(1, affectedRowsDelete2);
             int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
             Assert.AreEqual(1, affectedRowsDelete);
+
+            mediaIds = new int[2]{1, 2};
+
+            succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", mediaIds);
+            Assert.IsTrue(succes);
+
+            affectedRowsDelete2 = databaseConnection.ExecuteNonQuery("DELETE FROM media_message WHERE messageid IN (SELECT id FROM message WHERE description = @description)", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
+            Assert.AreEqual(2, affectedRowsDelete2);
+            affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
+            Assert.AreEqual(2, affectedRowsDelete);
         }
         
         [TestMethod]
