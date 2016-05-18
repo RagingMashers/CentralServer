@@ -356,5 +356,84 @@ namespace CentralServer
 
             return teams;
         }
+
+        [WebMethod]
+        public ActionPlan[] GetActionPlans(string token)
+        {
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            MySqlParameter param = new MySqlParameter();
+
+            string[] columnNames = new string[2];
+            columnNames[0] = "id";
+            columnNames[1] = "name";
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT id, name FROM actionplan", param, columnNames);
+
+            databaseConnection.Close();
+
+            int rowCount = (dataSet?.Count ?? 0);
+            ActionPlan[] actionPlans = new ActionPlan[rowCount];
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                actionPlans[i] = new ActionPlan(Int32.Parse(dataSet[i][0]), dataSet[i][1]);
+                actionPlans[i].AddTasks(GetTasksFromActionPlan(token, actionPlans[i].Id).ToList());
+            }
+            return actionPlans;
+        }
+
+        [WebMethod]
+        public Task[] GetTasks(string token)
+        {
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            MySqlParameter param = new MySqlParameter();
+
+            string[] columnNames = new string[2];
+            columnNames[0] = "id";
+            columnNames[1] = "description";
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT id, description FROM task", param, columnNames);
+
+            databaseConnection.Close();
+
+            int rowCount = (dataSet?.Count ?? 0);
+            Task[] tasks = new Task[rowCount];
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                tasks[i] = new Task(Int32.Parse(dataSet[i][0]), dataSet[i][1]);
+            }
+            return tasks;
+        }
+
+        [WebMethod]
+        public Task[] GetTasksFromActionPlan(string token, int actionPlanId)
+        {
+            if (databaseConnection == null)
+                databaseConnection = new DatabaseConnection();
+
+            MySqlParameter param = new MySqlParameter();
+
+            string[] columnNames = new string[2];
+            columnNames[0] = "id";
+            columnNames[1] = "description";
+
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM TASK WHERE id IN (SELECT Taskid FROM actionplan_task WHERE ActionPlanid = " + actionPlanId + " ORDER BY sequenceNumber)", param, columnNames);
+
+            databaseConnection.Close();
+
+            int rowCount = (dataSet?.Count ?? 0);
+            Task[] tasks = new Task[rowCount];
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                tasks[i] = new Task(Int32.Parse(dataSet[i][0]), dataSet[i][1]);
+            }
+            return tasks;
+        }
     }
 }
