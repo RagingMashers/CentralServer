@@ -45,6 +45,7 @@ namespace CentralServer.sita
 
         public void AddTasks(List<Task> tasks)
         {
+            Tasks.AddRange(tasks);
         }
     }
 }

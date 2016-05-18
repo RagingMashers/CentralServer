@@ -191,7 +191,7 @@ namespace CentralServer.Tests.sita
         [TestMethod]
         public void GetActionPlanTest()
         {
-            object[] dataSet = sitaApi.GetTasks("");
+            object[] dataSet = sitaApi.GetActionPlans("");
 
             bool result = false;
             if (dataSet.Length >= 1)
