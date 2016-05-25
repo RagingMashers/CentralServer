@@ -42,7 +42,7 @@ namespace CentralServer.Tests.sita
         [TestMethod]
         public void SendMessage()
         {
-            bool succes = sitaApi.SendMessage(null, 1, "ditIsEenTestBericht");
+            bool succes = sitaApi.SendMessage(null, 1, "ditIsEenTestBericht", "testTitel");
             Assert.IsTrue(succes);
 
             int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTestBericht"));
@@ -54,7 +54,7 @@ namespace CentralServer.Tests.sita
         {
             int[] mediaIds = new int[1]{1};
             
-            bool succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", mediaIds);
+            bool succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", "testTitel", mediaIds);
             Assert.IsTrue(succes);
 
             int affectedRowsDelete2 = databaseConnection.ExecuteNonQuery("DELETE FROM media_message WHERE messageid IN (SELECT id FROM message WHERE description = @description)", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
