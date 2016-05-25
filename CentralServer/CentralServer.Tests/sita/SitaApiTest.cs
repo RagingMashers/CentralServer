@@ -64,7 +64,7 @@ namespace CentralServer.Tests.sita
 
             mediaIds = new int[2]{1, 2};
 
-            succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", "testTitel", mediaIds);
+            succes = sitaApi.SendMessageWithMedia(null, 1, "ditIsEenTweedeTestBericht", mediaIds);
             Assert.IsTrue(succes);
 
             affectedRowsDelete2 = databaseConnection.ExecuteNonQuery("DELETE FROM media_message WHERE messageid IN (SELECT id FROM message WHERE description = @description)", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
