@@ -15,13 +15,30 @@ namespace CentralServer.api
         public object Login([FromUri]string username = null, [FromUri]string password = null)
         {
             object result;
+            var teamId = -1;
+            var token = "";
+            var loggedin = false;
+            var errorCode = 0;
+            var errorText = "";
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                result = new {loggedin = false, token = "", errorCode = 10, errorText="Missing parameters"};
+                errorCode = 10;
+                errorText = "Missing parameters";
+                result = new {loggedin, username, token, teamId, errorCode, errorText};
+            }
+            else if (username == "testUser" && password == "testPass")
+            {
+                loggedin = true;
+                token = "testToken";
+                teamId = 2;
+                errorText = "OK!";
+                result = new { loggedin, username, token, teamId, errorCode, errorText };
             }
             else
             {
-                result = new { loggedin = false, token = "", errorCode = -1, errorText = "Not yet implemented" };
+                errorCode = -1;
+                errorText = "Not yet implemented";
+                result = new { loggedin, username, token, teamId, errorCode, errorText};
             }
             return result;
         }
@@ -30,15 +47,25 @@ namespace CentralServer.api
         public object Logout([FromUri]string username = null, [FromUri]string token = null)
         {
             object result;
+            var succes = false;
+            var errorCode = 0;
+            var errorText = "";
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(token))
             {
-                result = new {success = false, errorCode = 10, errorText = "Missing parameters"};
-            }else if (false)//token or username not found or not matching
+                errorCode = 10;
+                errorText = "Missing parameters";
+                result = new {succes, errorCode, errorText};
+            }else if (username == "testUser" && token == "testToken")//token or username not found or not matching
             {
-                result = new { success = false, errorCode = 1, errorText = "Username and token do not match or do not exist" };
+                succes = true;
+                errorText = "OK!";
+                result = new { succes, errorCode, errorText };//Username and token do not match or do not exist = 1
             }
-            else{
-                result = new { success = false, errorCode = -1, errorText = "Not yet implemented" };
+            else
+            {
+                errorCode = -1;
+                errorText = "Not yet implemented";
+                result = new { succes, errorCode, errorText };
             }
             return result;
         }
