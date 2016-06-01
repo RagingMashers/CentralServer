@@ -273,7 +273,7 @@ namespace CentralServer
         }
         
         [WebMethod]
-        public bool SendMessage(string token, int teamId, string description)
+        public bool SendMessage(string token, int teamId, string description, string title)
         {
             if (databaseConnection == null)
                 databaseConnection = new DatabaseConnection();
@@ -281,8 +281,9 @@ namespace CentralServer
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@teamId", teamId));
             parameters.Add(new MySqlParameter("@description", description));
+            parameters.Add(new MySqlParameter("@title", title));
 
-            int affectedRows = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description) VALUES (@teamId, @description)", parameters);
+            int affectedRows = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description, title) VALUES (@teamId, @description, @title)", parameters);
             
             databaseConnection.Close();
             if (affectedRows == 1)
@@ -293,7 +294,7 @@ namespace CentralServer
         }
 
         [WebMethod]
-        public bool SendMessageWithMedia(string token,int teamId, string description,  int[] mediaIds)
+        public bool SendMessageWithMedia(string token,int teamId, string description, string title, int[] mediaIds)
         {
             if (databaseConnection == null)
                 databaseConnection = new DatabaseConnection();
@@ -307,8 +308,9 @@ namespace CentralServer
                 parameters.Add(new MySqlParameter("@teamId", teamId));
                 parameters.Add(new MySqlParameter("@description", description));
                 parameters.Add(new MySqlParameter("@mediaId", mediaId));
+                parameters.Add(new MySqlParameter("@title", title));
 
-                int affectedRowsMessage = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description) VALUES (@teamId, @description)", parameters);
+                int affectedRowsMessage = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description, title) VALUES (@teamId, @description, @title)", parameters);
                 int affectedRowsMedia_Message = databaseConnection.ExecuteNonQuery("INSERT INTO media_message (Mediaid, Messageid) VALUES (@mediaId, (SELECT MAX(id) FROM Message WHERE description = @description))", parameters);
                 if (affectedRowsMessage != 1 || affectedRowsMedia_Message != 1)
                 {
