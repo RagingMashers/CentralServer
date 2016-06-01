@@ -70,7 +70,7 @@ namespace CentralServer.Tests.sita
             affectedRowsDelete2 = databaseConnection.ExecuteNonQuery("DELETE FROM media_message WHERE messageid IN (SELECT id FROM message WHERE description = @description)", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
             Assert.AreEqual(2, affectedRowsDelete2);
             affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM message WHERE description = @description", new MySqlParameter("@description", "ditIsEenTweedeTestBericht"));
-            Assert.AreEqual(2, affectedRowsDelete);
+            Assert.AreEqual(1, affectedRowsDelete);
         }
 
         [TestMethod]
