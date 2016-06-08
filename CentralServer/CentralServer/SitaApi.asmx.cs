@@ -408,7 +408,7 @@ namespace CentralServer
             columnNames[0] = "id";
             columnNames[1] = "name";
 
-            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT id, name FROM actionplan", param, columnNames);
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT id, name FROM actionplan ORDER BY id", param, columnNames);
 
             databaseConnection.Close();
 
@@ -508,7 +508,7 @@ namespace CentralServer
 
             int count = 0;
 
-            if (rowsAffected == 1)
+            if (rowsAffected == 1 && taskIds != null)
             {
                 foreach (int taskId in taskIds)
                 {
