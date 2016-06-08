@@ -324,6 +324,43 @@ namespace CentralServer
         }
 
         [WebMethod]
+        public Message[] GetMessagesOfIncident(int incident, Message.DirectionType directionOfMessages)
+        {
+            databaseConnection = new DatabaseConnection();
+
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@direction", directionOfMessages.ToString()));
+            parameters.Add(new MySqlParameter("@incident", incident));
+
+            var columnNames = new string[6];
+            columnNames[0] = "id";
+            columnNames[1] = "teamid";
+            columnNames[2] = "description";
+            columnNames[3] = "title";
+            columnNames[4] = "direction";
+            columnNames[5] = "incidentId";
+
+            var dataSet = databaseConnection.ExecuteQuery(
+                "SELECT id, teamid, description, title, direction, incidentId FROM Message WHERE incidentId = @incident AND direction = @direction ORDER BY id DESC LIMIT 30", parameters, columnNames
+                );
+            
+            var amountOfRows = dataSet?.Count??0;
+            var messages = new Message[amountOfRows];
+
+            // id, teamid, description, title, direction
+            for(var i = 0; i < (dataSet?.Count??0); i++)
+            {
+                var row = dataSet[i];
+                
+                messages[i] = new Message(int.Parse(row[0]), int.Parse(row[1]), row[2], row[3], (Message.DirectionType)Enum.Parse(typeof(Message.DirectionType), row[4]), int.Parse(row[5])); 
+            }
+
+            databaseConnection.Close();
+
+            return messages;
+        }
+
+        [WebMethod]
         public Team[] GetTeamsNearIncident(string token, double longitude, double latitude, int radius)
         {
             databaseConnection = new DatabaseConnection();

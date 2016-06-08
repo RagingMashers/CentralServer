@@ -114,6 +114,7 @@
     <Compile Include="sita\Incident.cs" />
     <Compile Include="sita\Media.cs" />
     <Compile Include="sita\MediaAccepted.cs" />
+    <Compile Include="sita\Message.cs" />
     <Compile Include="sita\Person.cs" />
     <Compile Include="sita\RequestFullFilled.cs" />
     <Compile Include="sita\Resource.cs" />
