@@ -329,7 +329,7 @@ namespace CentralServer
             databaseConnection = new DatabaseConnection();
 
             List<MySqlParameter> parameters = new List<MySqlParameter>();
-            parameters.Add(new MySqlParameter("@direction", directionOfMessages));
+            parameters.Add(new MySqlParameter("@direction", directionOfMessages.ToString()));
             parameters.Add(new MySqlParameter("@incident", incident));
 
             var columnNames = new string[6];
@@ -351,7 +351,8 @@ namespace CentralServer
             for(var i = 0; i < (dataSet?.Count??0); i++)
             {
                 var row = dataSet[i];
-                messages[i] = new Message(int.Parse(row[0]), int.Parse(row[1]), row[2], row[3], (Message.DirectionType)int.Parse(row[4]), int.Parse(row[5])); 
+                
+                messages[i] = new Message(int.Parse(row[0]), int.Parse(row[1]), row[2], row[3], (Message.DirectionType)Enum.Parse(typeof(Message.DirectionType), row[4]), int.Parse(row[5])); 
             }
 
             databaseConnection.Close();
