@@ -302,15 +302,16 @@ namespace CentralServer
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             var succes = true;
 
+            parameters.Add(new MySqlParameter("@teamId", teamId));
+            parameters.Add(new MySqlParameter("@description", description));
+            parameters.Add(new MySqlParameter("@title", title));
+            parameters.Add(new MySqlParameter("@mediaId", "default"));
+            int affectedRowsMessage = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description, title) VALUES (@teamId, @description, @title)", parameters);
+
             foreach (int mediaId in mediaIds)
             {
-                parameters.Clear();
-                parameters.Add(new MySqlParameter("@teamId", teamId));
-                parameters.Add(new MySqlParameter("@description", description));
-                parameters.Add(new MySqlParameter("@mediaId", mediaId));
-                parameters.Add(new MySqlParameter("@title", title));
+                parameters[3] = new MySqlParameter("@mediaId", mediaId);
 
-                int affectedRowsMessage = databaseConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description, title) VALUES (@teamId, @description, @title)", parameters);
                 int affectedRowsMedia_Message = databaseConnection.ExecuteNonQuery("INSERT INTO media_message (Mediaid, Messageid) VALUES (@mediaId, (SELECT MAX(id) FROM Message WHERE description = @description))", parameters);
                 if (affectedRowsMessage != 1 || affectedRowsMedia_Message != 1)
                 {
