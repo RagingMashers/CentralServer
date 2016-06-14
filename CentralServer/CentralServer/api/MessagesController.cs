@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using CentralServer.Database;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CentralServer.api
@@ -97,7 +98,34 @@ namespace CentralServer.api
         [HttpPost]
         public object PostMessage([FromBody]JObject body, [FromUri]string username, [FromUri]string token)
         {
-            //todo use body
+            JToken jbody = body;
+            var message = (string)(jbody["message"].ToObject(typeof (string)));
+            var title = (string)(jbody["title"].ToObject(typeof(string)));
+            var team = (int) (jbody["team"].ToObject(typeof (int)));
+            var direction = (string) (jbody["direction"].ToObject(typeof (string)));
+            if (jbody["media"]?[0]?["id"] == null)
+            {
+                return new { succes = false};
+            }
+            var mid = (int)(jbody["media"][0]["id"].ToObject(typeof(int)));
+            var parameters = new List<MySqlParameter>()
+            {
+                new MySqlParameter("@tid",(ulong)team),
+                new MySqlParameter("@descr",message),
+                new MySqlParameter("@tit",title),
+                new MySqlParameter("@dir", direction)
+            };
+
+            dbConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description, title, direction) VALUES (@tid, @descr, @tit, @dir)", parameters);
+            var messageid = dbConnection.ExecuteScalar("SELECT MAX(id) FROM message", new List<MySqlParameter>());
+            var parameters2 = new List<MySqlParameter>()
+            {
+                new MySqlParameter("@mes",messageid),
+                new MySqlParameter("@med",(ulong)mid)
+            };
+            dbConnection.ExecuteNonQuery("INSERT INTO media_message (Mediaid, Messageid) VALUES (@med, @mes)", parameters2);
+
+
             return new {succes=true};
         }
 
