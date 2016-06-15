@@ -23,7 +23,7 @@ namespace CentralServer.sita
         private int team;
         public int Team 
         {
-            get { return id; }
+            get { return team; }
             set { team = value; }
         }
 
