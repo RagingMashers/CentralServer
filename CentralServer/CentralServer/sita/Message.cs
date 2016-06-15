@@ -55,6 +55,14 @@ namespace CentralServer.sita
             set { incident = value; } 
         }
 
+        private readonly List<Media> media;
+        public List<Media> Media 
+        {
+            get { return media;}
+            set { throw new AccessViolationException("media can not be set!"); }
+        }
+
+
         #endregion 
 
         /// <summary>
@@ -82,6 +90,20 @@ namespace CentralServer.sita
             this.title = title;
             this.directionOfMessage = directionOfMessage;
             this.incident = incident;
+            this.media = new List<Media>();
+        }
+
+        /// <summary>
+        /// Add a media object to the message.
+        /// </summary>
+        /// <param name="mediaObject">The media object to add.</param>
+        /// <returns>returns true if succesfully added the media object to the message</returns>
+        public bool AddMedia(Media mediaObject)
+        {
+            if (mediaObject == null) throw new NullReferenceException();
+            if (media.Contains(mediaObject)) return false;
+            media.Add(mediaObject);
+            return true;
         }
 
     }
