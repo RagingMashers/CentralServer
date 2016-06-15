@@ -103,11 +103,8 @@ namespace CentralServer.api
             var title = (string)(jbody["title"].ToObject(typeof(string)));
             var team = (int) (jbody["team"].ToObject(typeof (int)));
             var direction = (string) (jbody["direction"].ToObject(typeof (string)));
-            if (jbody["media"]?[0]?["id"] == null)
-            {
-                return new { succes = false};
-            }
-            var mid = (int)(jbody["media"][0]["id"].ToObject(typeof(int)));
+            var mid = (int) (jbody["media"]?[0]?["id"]?.ToObject(typeof (int)) ?? -1);
+            
             var parameters = new List<MySqlParameter>()
             {
                 new MySqlParameter("@tid",(ulong)team),
@@ -118,6 +115,10 @@ namespace CentralServer.api
 
             dbConnection.ExecuteNonQuery("INSERT INTO message (Teamid, description, title, direction) VALUES (@tid, @descr, @tit, @dir)", parameters);
             var messageid = dbConnection.ExecuteScalar("SELECT MAX(id) FROM message", new List<MySqlParameter>());
+            if (mid < 1)
+            {
+                return new {succes = true};
+            }
             var parameters2 = new List<MySqlParameter>()
             {
                 new MySqlParameter("@mes",messageid),
