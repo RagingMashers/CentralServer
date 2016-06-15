@@ -41,7 +41,13 @@ namespace CentralServer
 
             MySqlParameter param = new MySqlParameter();
 
-            var columnNames = new[] { "id","name","description","chemicalCompound","dangerLevel", "volatility"};
+            string[] columnNames = new string[6];
+            columnNames[0] = "id";
+            columnNames[1] = "name";
+            columnNames[2] = "description";
+            columnNames[3] = "chemicalCompound";
+            columnNames[4] = "dangerLevel";
+            columnNames[5] = "volatility";
 
             List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT id, name, description, chemicalCompound, dangerLevel, volatility FROM toxication", param, columnNames);
 
@@ -147,7 +153,15 @@ namespace CentralServer
             if (databaseConnection == null)
                 databaseConnection = new DatabaseConnection();
 
-            var columnNames = new[] { "id","amountVictims","amountWounded","longitude","latitude", "radius", "dangerLevel", "description"};
+            string[] columnNames = new string[8];
+            columnNames[0] = "id";
+            columnNames[1] = "amountVictims";
+            columnNames[2] = "amountWounded";
+            columnNames[3] = "longitude";
+            columnNames[4] = "latitude";
+            columnNames[5] = "radius";
+            columnNames[6] = "dangerLevel";
+            columnNames[7] = "description";
 
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@idStart", start));
@@ -174,7 +188,16 @@ namespace CentralServer
             if (databaseConnection == null)
                 databaseConnection = new DatabaseConnection();
 
-            var columnNames = new[] { "id","incidentId","content","mimeType","data", "source", "accepted", "suggestion", "importance"};
+            var columnNames = new string[9];
+            columnNames[0] = "id";
+            columnNames[1] = "incidentId";
+            columnNames[2] = "content";
+            columnNames[3] = "mimeType";
+            columnNames[4] = "date";
+            columnNames[5] = "source";
+            columnNames[6] = "accepted";
+            columnNames[7] = "suggestion";
+            columnNames[8] = "importance";
 
             var parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@idStart", start));
@@ -215,7 +238,16 @@ namespace CentralServer
             if (databaseConnection == null)
                 databaseConnection = new DatabaseConnection();
 
-            var columnNames = new[] { "id","incidentId","content","mimeType","data", "source", "accepted", "suggestion", "importance"};
+            string[] columnNames = new string[9];
+            columnNames[0] = "id";
+            columnNames[1] = "incidentId";
+            columnNames[2] = "content";
+            columnNames[3] = "mimeType";
+            columnNames[4] = "date";
+            columnNames[5] = "source";
+            columnNames[6] = "accepted";
+            columnNames[7] = "suggestion";
+            columnNames[8] = "importance";
 
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@idStart", start));
@@ -300,36 +332,27 @@ namespace CentralServer
             parameters.Add(new MySqlParameter("@direction", directionOfMessages.ToString()));
             parameters.Add(new MySqlParameter("@incident", incident));
 
-            var columnNames = new[] { "id","teamid","description","title","direction, incidentId" };
+            var columnNames = new string[6];
+            columnNames[0] = "id";
+            columnNames[1] = "teamid";
+            columnNames[2] = "description";
+            columnNames[3] = "title";
+            columnNames[4] = "direction";
+            columnNames[5] = "incidentId";
 
-            var dataSetMessages = databaseConnection.ExecuteQuery(
+            var dataSet = databaseConnection.ExecuteQuery(
                 "SELECT id, teamid, description, title, direction, incidentId FROM Message WHERE incidentId = @incident AND direction = @direction ORDER BY id DESC LIMIT 30", parameters, columnNames
                 );
             
-            var amountOfMessages = dataSetMessages?.Count??0;
-            var messages = new Message[amountOfMessages];
-            for(var i = 0; i < amountOfMessages; i++)
+            var amountOfRows = dataSet?.Count??0;
+            var messages = new Message[amountOfRows];
+
+            // id, teamid, description, title, direction
+            for(var i = 0; i < (dataSet?.Count??0); i++)
             {
-                var messageRow = dataSetMessages[i];
-                messages[i] = new Message(int.Parse(messageRow[0]), int.Parse(messageRow[1]), messageRow[2], messageRow[3], (Message.DirectionType)Enum.Parse(typeof(Message.DirectionType), messageRow[4]), int.Parse(messageRow[5]));
-
-                parameters = new List<MySqlParameter>();
-                parameters.Add(new MySqlParameter("@messageId", messageRow[0]));
-
-                columnNames = new[] { "id","mimeType","source","importance","date", "accepted", "suggestion", "Messageid"};
-
-                databaseConnection = new DatabaseConnection();
-                var dataSetMedia = databaseConnection.ExecuteQuery(
-                    "SELECT media.id, media.mimeType, media.source, media.importance, media.date, media.accepted, media.suggestion, media_message.Messageid FROM media, media_message WHERE media.id = media_message.Mediaid AND media_message.Messageid = @messageId", parameters, columnNames
-                    );
+                var row = dataSet[i];
                 
-                var amountOfMedia = dataSetMedia?.Count??0;
-                for(var j = 0; j < amountOfMedia; j++)
-                {        
-                    var mediaRow = dataSetMedia[j];
-                    Media tempMedia = new Media(int.Parse(mediaRow[0]), new byte[0], mediaRow[1], DateTime.Parse(mediaRow[4]), mediaRow[2], (MediaAccepted)Enum.Parse(typeof(MediaAccepted), mediaRow[5]), mediaRow[6], (Importance)Enum.Parse(typeof(Importance), mediaRow[3]), incident, 0);
-                    messages[i].AddMedia(tempMedia);
-                }
+                messages[i] = new Message(int.Parse(row[0]), int.Parse(row[1]), row[2], row[3], (Message.DirectionType)Enum.Parse(typeof(Message.DirectionType), row[4]), int.Parse(row[5])); 
             }
 
             databaseConnection.Close();
@@ -347,7 +370,13 @@ namespace CentralServer
             parameters.Add(new MySqlParameter("@lat", latitude));
             parameters.Add(new MySqlParameter("@radius", radius));
 
-            var columnNames = new[] { "id","type","startDate","endDate","longitude", "latitude"};
+            var columnNames = new string[6];
+            columnNames[0] = "id";
+            columnNames[1] = "type";
+            columnNames[2] = "startDate";
+            columnNames[3] = "endDate";
+            columnNames[4] = "longitude";
+            columnNames[5] = "latitude";
 
             var dataSet = databaseConnection.ExecuteQuery(
                 "SELECT id, type, startDate, endDate, longitude, latitude FROM team WHERE endDate IS NULL HAVING GETDISTANCE(@lat, @long, latitude, longitude) < @radius", parameters, columnNames
