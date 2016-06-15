@@ -532,9 +532,9 @@ namespace CentralServer
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@name", name));
 
-            databaseConnection.ExecuteNonQuery("DELETE FROM actionplan_task WHERE ActionPlanId IN (SELECT id FROM actionplan WHERE name = @name)", new MySqlParameter("@name", "Test"));
+            databaseConnection.ExecuteNonQuery("DELETE FROM actionplan_task WHERE ActionPlanId IN (SELECT id FROM actionplan WHERE name = @name)", new MySqlParameter("@name", name));
             int id = (Int32.Parse(databaseConnection.ExecuteScalar("SELECT id FROM actionplan WHERE name = @name", parameters).ToString()));
-            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM actionplan WHERE name = @name", new MySqlParameter("@name", "Test"));
+            int affectedRowsDelete = databaseConnection.ExecuteNonQuery("DELETE FROM actionplan WHERE name = @name", new MySqlParameter("@name", name));
 
             if (affectedRowsDelete == 1)
             {
