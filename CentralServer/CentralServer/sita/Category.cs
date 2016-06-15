@@ -1,34 +1,41 @@
 using System;
 namespace CentralServer.sita {
 	public class Category {
-		private readonly int id;
-		public int Id {
-			get {
-				return id;
-			}
+        #region fields and properties
+        private readonly int id;
+		public int Id
+        {
+			get {return id;}
+            set { throw new AccessViolationException("Id can not be set!");}
 		}
-		private String name;
-		public String Name {
-			get {
-				return name;
-			}
-			set {
-				name = value;
-			}
+		private string name;
+		public string Name
+        {
+			get {return name;}
+			set {name = value;}
 		}
 		private Category parent;
-		public Category Parent {
-			get {
-				return parent;
-			}
-			set {
-				parent = value;
-			}
+		public Category Parent
+        {
+			get {return parent;}
+			set {parent = value;}
 		}
+        #endregion
 
+        /// <summary>
+        /// DO NOT USE! FOR SERIALISATION ONLY!
+        /// </summary>
+	    public Category()
+	    {
+	        
+	    }
 
-		private Category part_of_category;
-
+        public Category(int id, string name, Category parent)
+        {
+            this.id = id;
+            this.name = name;
+            this.parent = parent;
+        }
 	}
 
 }

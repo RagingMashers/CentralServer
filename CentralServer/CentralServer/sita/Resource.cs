@@ -1,44 +1,84 @@
 using System;
+using System.Collections.Generic;
+
 namespace CentralServer.sita {
 	public class Resource {
-		private readonly int id;
-		public int Id {
-			get {
-				return id;
-			}
+        #region fields and properties
+        private readonly int id;
+		public int Id
+        {
+			get {return id;}
+            set { throw new AccessViolationException("Id can not be set!");}
 		}
 		private double longitude;
-		public double Longitude {
-			get {
-				return longitude;
-			}
-			set {
-				longitude = value;
-			}
+		public double Longitude
+        {
+			get {return longitude;}
+			set {longitude = value;}
 		}
 		private double latitude;
-		public double Latitude {
-			get {
-				return latitude;
-			}
-			set {
-				latitude = value;
-			}
+		public double Latitude
+        {
+			get {return latitude;}
+			set {latitude = value;}
 		}
 		private bool available;
-		public bool Available {
-			get {
-				return available;
-			}
-			set {
-				available = value;
-			}
+		public bool Available
+        {
+			get {return available;}
+			set {available = value;}
 		}
 
-		private System.Collections.Generic.List<Team> teams;
+		private ResourseType typeOfResource;
+        public ResourseType TypeOFResource
+        {
+            get{return typeOfResource;}
+            set{typeOfResource = value;}
+        }
 
-		private ResourseType type_of_resource;
+        private List<Team> teams;
+        public List<Team> Teams
+        {
+            get { return teams; }
+            set { throw new AccessViolationException("Teams can not be set!");}
+        }
 
+	    #endregion
+
+        /// <summary>
+        /// DO NOT USE! FOR SERIALISATION ONLY!
+        /// </summary>
+	    public Resource()
+	    {
+	        
+	    }
+        
+        /// <summary>
+        /// Create instance of Resource
+        /// </summary>
+        /// <param name="id">The id of the resource</param>
+        /// <param name="longitude">The long of the Resource's home position</param>
+        /// <param name="latitude">The lat of the Resource's home position</param>
+        /// <param name="available">If the resource is available at this point in time</param>
+        /// <param name="typeOfResource">What kind of resource it is</param>
+        public Resource(int id, double longitude, double latitude, bool available, ResourseType typeOfResource)
+        {
+            this.id = id;
+            this.longitude = longitude;
+            this.latitude = latitude;
+            this.available = available;
+            this.typeOfResource = typeOfResource;
+            this.teams = new List<Team>();
+        }
+
+        /// <summary>
+        /// Assign this resource to a team
+        /// </summary>
+        /// <param name="team">The team to assign to</param>
+	    public void AssigntToTeam(Team team)
+	    {
+	        teams.Add(team);
+	    }
 	}
 
 }

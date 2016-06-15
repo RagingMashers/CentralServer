@@ -10,10 +10,8 @@ namespace CentralServer.Database
 {
     public class DatabaseConnection
     {
-        private string constr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+        private readonly string constr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
         private MySqlConnection connection = null;
-
-        public MySqlConnection Connection { get { return connection; }}
 
         /// <summary>
         /// Connects to the database connection.
@@ -22,8 +20,7 @@ namespace CentralServer.Database
         {
             try
             {
-                connection = new MySqlConnection();
-                connection.ConnectionString = constr;
+                connection = new MySqlConnection(constr);
                 connection.Open();
 
                 return true;
@@ -40,54 +37,150 @@ namespace CentralServer.Database
         /// </summary>
         public void Close()
         {
-            if (connection != null)
-            {
-                connection.Close();
-            }
+            if (connection != null) connection.Close();
         }
 
         /// <summary>
-        /// Executes an query on the database. Use a while(reader.Read()) loop to iterate through the reader. 
-        /// Close the reader and the connection after you are done!
+        /// Executes an query on the database. 
+        /// The data returned will be a list of rows of data.
         /// </summary>
-        /// <param name="query">The SQL query</param>
-        /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection</param>
-        /// <returns> If no rows found it returns null, else it return a MySqlDataReader</returns>
-        public MySqlDataReader ExecuteQuery(string query, List<MySqlParameter> parameters)
+        /// <param name="query">The SQL query.</param>
+        /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection.</param>
+        /// <param name="columnNames">An array of strings that represent the columnnames you want returned.</param>
+        /// <returns>If no rows found it returns null, else it returns a dataSet(List of string arrays).</returns>
+        public List<string[]> ExecuteQuery(string query, List<MySqlParameter> parameters, string[] columnNames)
         {
             try
             {
                 if (Connect())
                 {
-                    MySqlCommand cmd = connection.CreateCommand();
-                    cmd.CommandText = query;
-                    foreach(MySqlParameter parameter in parameters){
-                        cmd.Parameters.Add(parameter);
-                    }
+                    var dataSet = new List<string[]>();
 
-                    MySqlDataReader reader = cmd.ExecuteReader();
-                    if (!reader.HasRows) return null;
-                    else return reader;
+                    var cmd = connection.CreateCommand();
+                    cmd.CommandText = query;
+                    cmd.Parameters.AddRange(parameters.ToArray());
+
+                    var reader = cmd.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        
+
+                        while (reader.Read())
+                        {
+                            var dataRow = new string[columnNames.Length];
+                            var count = 0;
+
+                            foreach (var columnName in columnNames)
+                            {
+                                if (reader.IsDBNull(count))
+                                {
+                                    dataRow[count] = "";
+                                }
+                                else
+                                {
+                                    dataRow[count] = reader.GetString(columnName);
+                                }
+
+                                count++;
+                            }
+
+                            dataSet.Add(dataRow);
+                        }
+                        reader.Close();
+
+                        return dataSet;
+                    }
                 }
             }
             catch (MySqlException ex)
             {
                 Console.WriteLine(ex.ToString());
             }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                {
+                    Close();
+                }
+            }
             return null;
         }
 
         /// <summary>
-        /// 
+        /// Executes an query on the database. 
+        /// The data returned will be a list of rows of data.
         /// </summary>
-        /// <param name="query"></param>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
-        public MySqlDataReader ExecuteQuery(string query, MySqlParameter parameter)
+        /// <param name="query">The SQL query.</param>
+        /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection.</param>
+        /// <returns>The reader object of the query</returns>
+        public MySqlDataReader ExecuteQueryReader(string query, List<MySqlParameter> parameters)
         {
-            List<MySqlParameter> parameters = new List<MySqlParameter>();
-            parameters.Add(parameter);
-            return ExecuteQuery(query, parameters);
+            try
+            {
+                if (Connect())
+                {
+                    var cmd = connection.CreateCommand();
+                    cmd.CommandText = query;
+                    cmd.Parameters.AddRange(parameters.ToArray());
+
+                    return cmd.ExecuteReader();
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+                
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Executes an query on the database. 
+        /// The object returned will be the first column of the first row of the query result.
+        /// </summary>
+        /// <param name="query">The SQL query.</param>
+        /// <param name="parameters">The list with MySqlParamters for preventing SQL-Injection.</param>
+        /// <returns>The first column of the first row or null</returns>
+        public object ExecuteScalar(string query, List<MySqlParameter> parameters)
+        {
+            try
+            {
+                if (Connect())
+                {
+                    var cmd = connection.CreateCommand();
+                    cmd.CommandText = query;
+                    cmd.Parameters.AddRange(parameters.ToArray());
+
+                    var result = cmd.ExecuteScalar();
+                
+                    return result is DBNull? null : result;
+
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                {
+                    Close();
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Method for the ExecuteQuery with only one parameter
+        /// </summary>
+        /// <param name="query">The query that will be executed</param>
+        /// <param name="parameter">The paramter that will prevent SQL-injection</param>
+        /// <returns></returns>
+        public List<string[]> ExecuteQuery(string query, MySqlParameter parameter, string[] columnNames)
+        {
+            var parameters = new List<MySqlParameter> {parameter};
+            return ExecuteQuery(query, parameters, columnNames);
         }
 
         /// <summary>
@@ -103,11 +196,9 @@ namespace CentralServer.Database
             {
                 if (Connect())
                 {
-                    MySqlCommand cmd = connection.CreateCommand();
+                    var cmd = connection.CreateCommand();
                     cmd.CommandText = query;
-                    foreach(MySqlParameter parameter in parameters){
-                        cmd.Parameters.Add(parameter);
-                    }
+                    cmd.Parameters.AddRange(parameters.ToArray());
 
                     return cmd.ExecuteNonQuery();
                 }
@@ -134,8 +225,7 @@ namespace CentralServer.Database
         /// <returns></returns>
         public int ExecuteNonQuery(string query, MySqlParameter parameter)
         {
-            List<MySqlParameter> parameters = new List<MySqlParameter>();
-            parameters.Add(parameter);
+            var parameters = new List<MySqlParameter> {parameter};
             return ExecuteNonQuery(query, parameters);
         }
     }
