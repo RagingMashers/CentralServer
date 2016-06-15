@@ -125,7 +125,7 @@ namespace CentralServer
             parameters.Add(new MySqlParameter("@dangerlevel", dangerlevel));
             parameters.Add(new MySqlParameter("@description", description));
 
-            int affectedRowsInsert = databaseConnection.ExecuteNonQuery("UPDATE Incident SET amountVictims = @amountVictims, amountWounded = @amountWounded, longitude = @longitude, latitude = @latitude, latitude = @latitude, dangerlevel = @dangerlevel, description = @description WHERE id = @id", parameters);
+            int affectedRowsInsert = databaseConnection.ExecuteNonQuery("UPDATE Incident SET amountVictims = @amountVictims, amountWounded = @amountWounded, longitude = @longitude, latitude = @latitude, latitude = @latitude, dangerlevel = @dangerlevel, description = @description, radius = @radius WHERE id = @id", parameters);
             databaseConnection.Close();
 
             return 1 == affectedRowsInsert;
