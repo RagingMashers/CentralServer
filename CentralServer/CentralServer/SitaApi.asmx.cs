@@ -167,7 +167,7 @@ namespace CentralServer
             parameters.Add(new MySqlParameter("@idStart", start));
             parameters.Add(new MySqlParameter("@idEnd", start + limit));
 
-            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Incident WHERE id >= @idStart AND id <= @idEnd", parameters, columnNames);
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Incident LIMIT " + limit, parameters, columnNames);
             Incident[] incidents = new Incident[limit + 1];
 
             //int id, int amountVictims, int amountWounded, double longitude, double latitude, int dangerlevel, string description
@@ -206,7 +206,7 @@ namespace CentralServer
 
             var dataSet =
                 databaseConnection.ExecuteQuery(
-                    "SELECT * FROM Media WHERE id >= @idStart AND id <= @idEnd AND IncidentId = @incidentId", parameters,
+                    "SELECT * FROM Media WHERE IncidentId = @incidentId LIMIT " + limit, parameters,
                     columnNames);
             var media = new Media[limit + 1];
 
@@ -253,7 +253,7 @@ namespace CentralServer
             parameters.Add(new MySqlParameter("@idStart", start));
             parameters.Add(new MySqlParameter("@idEnd", start + limit));
 
-            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Media WHERE id >= @idStart AND id <= @idEnd", parameters, columnNames);
+            List<string[]> dataSet = databaseConnection.ExecuteQuery("SELECT * FROM Media LIMIT " + limit, parameters, columnNames);
             Media[] media = new Media[limit + 1];
 
             columnNames = new string[1];
