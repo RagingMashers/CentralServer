@@ -215,7 +215,7 @@ namespace CentralServer
             if (databaseConnection == null)
                 databaseConnection = new DatabaseConnection();
 
-            var columnNames = new[] { "id","incidentId","content","mimeType","data", "source", "accepted", "suggestion", "importance"};
+            var columnNames = new[] { "id","incidentId","content","mimeType","date", "source", "accepted", "suggestion", "importance"};
 
             List<MySqlParameter> parameters = new List<MySqlParameter>();
             parameters.Add(new MySqlParameter("@idStart", start));
@@ -300,7 +300,7 @@ namespace CentralServer
             parameters.Add(new MySqlParameter("@direction", directionOfMessages.ToString()));
             parameters.Add(new MySqlParameter("@incident", incident));
 
-            var columnNames = new[] { "id","teamid","description","title","direction, incidentId" };
+            var columnNames = new[] { "id","teamid","description","title","direction", "incidentId" };
 
             var dataSetMessages = databaseConnection.ExecuteQuery(
                 "SELECT id, teamid, description, title, direction, incidentId FROM Message WHERE incidentId = @incident AND direction = @direction ORDER BY id DESC LIMIT 30", parameters, columnNames
