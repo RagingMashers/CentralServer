@@ -103,8 +103,12 @@ namespace CentralServer.api
             var title = (string)(jbody["title"].ToObject(typeof(string)));
             var team = (int) (jbody["team"].ToObject(typeof (int)));
             var direction = (string) (jbody["direction"].ToObject(typeof (string)));
-            var mid = (int) (jbody["media"]?[0]?["id"]?.ToObject(typeof (int)) ?? -1);
-            
+            var mid = -1;
+            if (jbody["media"] != null && jbody["media"].HasValues && jbody["media"][0]["id"] != null)
+            {
+                mid = (int) (jbody["media"]?[0]?["id"]?.ToObject(typeof (int)) ?? -1);
+            }
+
             var parameters = new List<MySqlParameter>()
             {
                 new MySqlParameter("@tid",(ulong)team),

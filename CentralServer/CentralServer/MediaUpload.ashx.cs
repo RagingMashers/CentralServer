@@ -131,24 +131,24 @@ namespace CentralServer
             };
 
             //insert data
-            con.ExecuteNonQuery("INSERT INTO media (Incidentid, content, mimeType, date, source, accepted, importance) VALUES (@iid, @content, @mimeType, now(), \"web\", 2, 1)", parameters);
+            var rows = con.ExecuteNonQuery("INSERT INTO media (Incidentid, content, mimeType, date, source, accepted, importance) VALUES (@iid, @content, @mimeType, now(), \"web\", 2, 1)", parameters);
             //get new id
-            var mido = con.ExecuteScalar("SELECT last_insert_id()", new List<MySqlParameter>());
+            var mido = con.ExecuteScalar("SELECT MAX(id) FROM media", new List<MySqlParameter>());
 
             //no idea, somthing went wrong?
-            if (!(mido is ulong))
-            {
-                context.Response.StatusCode = 400;
-                context.Response.ContentType = "application/json";
-                var result = new { succes = false, mediaId = -1, errorCode = 7, errorText = "Somthing went wrong while inserting!"/*, debug=new {mido, size = data.Count(), type = mido.GetType().ToString()}*/ };
-                context.Response.Write(JsonConvert.SerializeObject(result));
-                return;
-            }
+            //if (!(mido is ulong))
+            //{
+            //    context.Response.StatusCode = 400;
+            //    context.Response.ContentType = "application/json";
+            //    var result = new { succes = false, mediaId = -1, errorCode = 7, errorText = "Somthing went wrong while inserting!"/*, debug=new {mido, size = data.Count(), type = mido.GetType().ToString()}*/ };
+            //    context.Response.Write(JsonConvert.SerializeObject(result));
+            //    return;
+            //}
 
             //whohoe everything is uploaded!
             context.Response.StatusCode = 200;
             context.Response.ContentType = "application/json";
-            var fresult = new { succes = true, mediaId = (ulong)mido, errorCode = 0, errorText = "OK!"/*, debug=new {filename, length = file.ContentLength, acutallength = data.Count, /*hash=GetMd5Hash(file.InputStream),* / mime = file.ContentType} */};
+            var fresult = new { succes = true, mediaId = mido, errorCode = 0, errorText = "OK!", debug=new {filename, length = file.ContentLength, acutallength = data.Count, /*hash=GetMd5Hash(file.InputStream),*/ mime = file.ContentType, mime2 = mime, rows}};
             context.Response.Write(JsonConvert.SerializeObject(fresult));
             return;
 
